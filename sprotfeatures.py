@@ -60,9 +60,10 @@ def format_line (file_line):
    """
    #change .. for a white space
    line = file_line.replace('..', ' ')
-   #split the string by white spaces - problem with multiple white spaces
-   info_list = ' '.join(line.split())
-   #print (info_list)
+    
+   line = ' '.join(line.split())
+   #split the string by white spaces
+   info_list = line.split()
    ID = info_list [0]
    feature = info_list [1]
    min_res = info_list [2]
@@ -92,6 +93,7 @@ def check_feature (sprot_file):
    for line in sprot_lines:
       if line.startswith('FT'):
          (ID, feature, min_res, max_res) = format_line (line)
+         #PROBLEM - not all lines have 4 strings in them
          #check if the feature is relevant
          if feature in relevant_fts:
             #check if the residue of interest is in the residue range
@@ -100,7 +102,7 @@ def check_feature (sprot_file):
                print ("bad")
                print (feature)
             else: print ('ok')
-         
+
 
 
 
