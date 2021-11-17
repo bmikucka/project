@@ -45,7 +45,7 @@ def read_file (filename):
       return file_lines
 
 #*************************************************************************
-def format_line (file_line):
+def format_line_range (file_line):
    """ Formats a line of the SwissProt file to split into ID, feature and 
    range of residues that constitute the feature.
 
@@ -66,11 +66,33 @@ def format_line (file_line):
    info_list = line.split()
    ID = info_list [0]
    feature = info_list [1]
-   min_res = info_list [2]
-   #problem - doesnt always have two residues
-   max_res = info_list [3]
+   min_res = int(info_list [2])
+   max_res = int(info_list [3])
 
    return (ID, feature, min_res, max_res)
+
+#*************************************************************************
+def format_line_single (file_line):
+   """ Formats a line of the SwissProt file to split into ID, feature and 
+   one residue that constitutes the feature.
+
+   Input:   file_line   --- line of SwissProt file
+   Return:  ID          --- line ID (FT if a feature)
+            feature     --- type of feature
+            res         --- residue number at which the feature starts
+            
+   16.11.21    Original    By: BAM
+
+   """
+    
+   line = ' '.join(file_line.split())
+   #split the string by white spaces
+   info_list = line.split()
+   ID = info_list [0]
+   feature = info_list [1]
+   res = int(info_list [2])
+
+   return (ID, feature, res)
 
 #*************************************************************************
 def check_feature (sprot_file):
@@ -89,22 +111,32 @@ def check_feature (sprot_file):
    relevant_fts = ["ACT_SITE", "BINDING", "CA_BIND", "DNA_BIND", "NP_BIND", "METAL", 
    "MOD_RES", "CARBOHYD", "MOTIF", "LIPID", "DISULFID", "CROSSLNK"]
 
-   #check if line with a feature
    for line in sprot_lines:
-      if line.startswith('FT'):
-         (ID, feature, min_res, max_res) = format_line (line)
-         #PROBLEM - not all lines have 4 strings in them
-         #check if the feature is relevant
-         if feature in relevant_fts:
-            #check if the residue of interest is in the residue range
-            if (residue_of_interest >= min_res and residue_of_interest <= max_res):
-               #bad for mutation in residue of interest if within a relevant feature
-               print ("bad")
-               print (feature)
-            else: print ('ok')
+      #filter out lines with FT and no / 
+      if (line.startswith('FT') and ('/' not in line)):
+         #for features across a range or residues
+         if '..' in line:
+            (ID, feature, min_res, max_res) = format_line_range (line)
+            #check if feature is relevant
+            if feature in relevant_fts:
+               #check if residue of interest it in the range of feature
+               if (residue_of_interest >= min_res and residue_of_interest <= max_res):
+                  #bad for the mutation to be in a relevant feature
+                  print ('bad')
+                  print (feature)
+               else: print ('ok')
 
-
-
+         #for features at one residue
+         else:
+            (ID, feature, res) = format_line_single (line)
+            #chech if feature is relevant
+            if feature in relevant_fts:
+               #check if residue of interest is the residue of the feature
+               if residue_of_interest == res:
+                  #bad for the mutation to be in a relevant feature
+                  print ("bad")
+                  print (feature)
+               else: print('ok')
 
 #*************************************************************************
 
@@ -112,7 +144,7 @@ def check_feature (sprot_file):
 #take file and residue number from command line
 
 sprot_file = sys.argv[1]
-residue_of_interest = sys.argv[2]
+residue_of_interest = int(sys.argv[2])
 
 check_feature (sprot_file)
 
