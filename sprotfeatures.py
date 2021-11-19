@@ -66,7 +66,7 @@ def check_feature (sprot_file):
    for line in sprot_lines:
       #filter for lines with residue numbers
       feature_line = re.findall("^FT   [A-Z]", line)
-      if feature_line != None:
+      if feature_line:
          #replace multiples of whitespaces
          line = ' '.join(line.split())
          #split the string by white spaces
@@ -112,3 +112,6 @@ check_feature (sprot_file)
 
 
 
+
+   
+      
