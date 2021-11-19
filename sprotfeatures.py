@@ -112,8 +112,8 @@ def check_feature (sprot_file):
    "MOD_RES", "CARBOHYD", "MOTIF", "LIPID", "DISULFID", "CROSSLNK"]
 
    for line in sprot_lines:
-      #filter out lines with FT and no / 
-      if (line.startswith('FT') and ('/' not in line)):
+      #filter out lines with FT and no / - this doesnt work
+      if (line.startswith('FT')) and ('/' not in line):
          #for features across a range or residues
          if '..' in line:
             (ID, feature, min_res, max_res) = format_line_range (line)
@@ -137,6 +137,9 @@ def check_feature (sprot_file):
                   print ("bad")
                   print (feature)
                else: print('ok')
+               #need to change this so it doesnt print ok/bad separately 
+               #for the single residue features
+
 
 #*************************************************************************
 
