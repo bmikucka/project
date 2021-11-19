@@ -94,10 +94,15 @@ def check_feature (sprot_file):
                #bad for the mutation to be in a relevant feature
                print ('bad')
                print (info_list[1])
+            else: 
+               print ('ok')
          elif (info_list[1] == 'DISULFID' or info_list[1] == 'CROSSLNK'):
             if (res_of_interest == start and res_of_interest == stop):
                print ('bad')
                print (info_list[1])
+            else:
+               print ('ok')
+
 
 
 #*************************************************************************
