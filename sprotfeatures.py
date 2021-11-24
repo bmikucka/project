@@ -76,7 +76,7 @@ def check_feature (sprot_file):
       'DISULFID':  (2**10),
       'CROSSLNK':  (2**11)
    }
-  
+
 
    #relevant_fts = ["ACT_SITE", "BINDING", "CA_BIND", "DNA_BIND", "NP_BIND", "METAL", 
    #"MOD_RES", "CARBOHYD", "MOTIF", "LIPID"]
@@ -131,6 +131,7 @@ def check_feature (sprot_file):
                print ('ok')
             #if nonmutated features also need to be added then put the result part here
          return result
+
 
    #create a string to print binary results
    result = bin(result) 
