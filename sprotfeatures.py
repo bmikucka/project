@@ -60,6 +60,7 @@ def check_feature (sprot_file):
    sprot_lines = read_file(sprot_file)
    #make list of relevant features
 
+
    spfeatures = {
       "NULL":      (0),
       'ACT_SITE':  (2**0),
@@ -75,6 +76,7 @@ def check_feature (sprot_file):
       'DISULFID':  (2**10),
       'CROSSLNK':  (2**11)
    }
+  
 
    #relevant_fts = ["ACT_SITE", "BINDING", "CA_BIND", "DNA_BIND", "NP_BIND", "METAL", 
    #"MOD_RES", "CARBOHYD", "MOTIF", "LIPID"]
@@ -113,7 +115,7 @@ def check_feature (sprot_file):
                print ('bad')
                print (info_list[1])
                #add the feature to the result (if only mutated features)
-               result = result | spfeatures[info_list[1]][0]
+               result = result | spfeatures[info_list[1]]
             else:
                print ('ok')
             #if nonmutated features also need to be added then put the result part here
@@ -124,7 +126,7 @@ def check_feature (sprot_file):
                print ('bad')
                print (info_list[1])
                #add the feature to the result (if only mutated features)
-               result = result | spfeatures[info_list[1]][0]
+               result = result | spfeatures[info_list[1]]
             else: 
                print ('ok')
             #if nonmutated features also need to be added then put the result part here
@@ -135,6 +137,7 @@ def check_feature (sprot_file):
    #make result into a string 
    result = str(result)
    print (result)
+
 
 #*************************************************************************
 
