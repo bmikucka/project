@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 Program: sprotfeatures
 File:    sprotfeatures.py
@@ -159,16 +161,13 @@ def check_feature (sprot_file, res_of_interest):
 
 
 
-
-
-
 #take file and residue number from command line
 
 sprot_file = sys.argv[1]
 res_of_interest = int(sys.argv[2])
 
 print (check_feature (sprot_file, res_of_interest))
-#take in second parameter!!
+
 
 
 
