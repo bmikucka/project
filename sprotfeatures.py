@@ -46,12 +46,20 @@ def read_file (filename):
       return file_lines
 
 #*************************************************************************
-def check_feature (sprot_file):
+def check_feature (sprot_file, res_of_interest):
    """ Checks if the line refers to a feature, if the feature is relevant 
    and if the residue of interest is in the range of the feature. Prints 
    "ok" if the residue is not in a feature and "bad" if within a feature.
 
-   Input:   sprot_file  --- Swiss Prot File      
+   Input:   sprot_file      --- Swiss Prot File   
+            res_of_interest --- Number of residue being checked
+   Output:  outcome         --- 'bad' if residue of interest is in a 
+                                feature of interest, otherwise 'ok'
+            result          --- string with binary representation of 
+                                relevant features the residue is in
+            mut_features    --- list of features affected if residue of 
+                                interest is mutated
+           
 
    16.11.21    Original    By: BAM
 
@@ -77,33 +85,38 @@ def check_feature (sprot_file):
       'CROSSLNK':  (2**11)
    }
 
-
-   #relevant_fts = ["ACT_SITE", "BINDING", "CA_BIND", "DNA_BIND", "NP_BIND", "METAL", 
-   #"MOD_RES", "CARBOHYD", "MOTIF", "LIPID"]
-   #special_fts = ["DISULFID", "CROSSLNK"]
-
    result = 0
+   #variable to check if the residue of interest is in any relevant features
+   a = 0
+   #list of features affected by the mutation at the residue
+   mut_features = []
+
 
    for line in sprot_lines:
       #filter for lines with residue numbers
       feature_line = re.findall("^FT   [A-Z]", line)
+
       if feature_line:
          #replace multiples of whitespaces
          line = ' '.join(line.split())
          #split the string by white spaces
          info_list = line.split()
+
          if '..' in info_list[2]:
             #for features with range of residues
-            res_range = info_list[2].replace('..', ' ')
-            res_range = res_range.split()
+            res_range_str = info_list[2].replace('..', ' ')
+            res_range = res_range_str.split() 
             start = int(res_range[0])
             stop = int(res_range[1])
+
          else:
+
             #for features at one residue
             if len(info_list) == 3:
                start = int(info_list[2])
                stop = int(info_list[2])
             #for features with residue numbers separated by spaces
+
             elif len(info_list) == 4:
                start = int(info_list[2])
                stop = int(info_list[3])
@@ -111,34 +124,36 @@ def check_feature (sprot_file):
          #check for relevant features
          
          if (info_list[1] == 'DISULFID' or info_list[1] == 'CROSSLNK'):
-            if (res_of_interest == start and res_of_interest == stop):
-               print ('bad')
-               print (info_list[1])
-               #add the feature to the result (if only mutated features)
-               result = result | spfeatures[info_list[1]]
-            else:
-               print ('ok')
-            #if nonmutated features also need to be added then put the result part here
+            result = result | spfeatures[info_list[1]]
+
+            if (res_of_interest == start or res_of_interest == stop):
+               a = a + 1
+               #add the feature to the list of affected features
+               mut_features.append(info_list[1])
+
          elif info_list[1] in spfeatures:
+            result = result | spfeatures[info_list[1]]
+
             #check if residue of interest is in the feature's range
             if (res_of_interest >= start and res_of_interest <= stop):
                #bad for the mutation to be in a relevant feature
-               print ('bad')
-               print (info_list[1])
-               #add the feature to the result (if only mutated features)
-               result = result | spfeatures[info_list[1]]
-            else: 
-               print ('ok')
-            #if nonmutated features also need to be added then put the result part here
-         return result
+               a = a + 1
+               #add the feature to the list of affected features
+               mut_features.append(info_list[1])
+            
 
 
    #create a string to print binary results
-   result = bin(result) 
+   result = bin(result)[2:].zfill(12)
    #make result into a string 
    result = str(result)
-   print (result)
 
+   if a == 0:
+      outcome = 'ok'
+   else: 
+      outcome = 'bad'
+
+   return (outcome, mut_features, result)
 
 #*************************************************************************
 
@@ -152,7 +167,8 @@ def check_feature (sprot_file):
 sprot_file = sys.argv[1]
 res_of_interest = int(sys.argv[2])
 
-check_feature (sprot_file)
+print (check_feature (sprot_file, res_of_interest))
+#take in second parameter!!
 
 
 
