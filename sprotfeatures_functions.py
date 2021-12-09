@@ -46,6 +46,70 @@ def read_file (filename):
       return file_lines
 
 #*************************************************************************
+def get_ft_residues (sprot_file, res_of_interest):
+   """ Returns list of residues that are in relevant features based on 
+   SwissProt file.
+
+   Input:   sprot_file      --- Swiss Prot File   
+            res_of_interest --- Number of residue being checked
+   Output:  sp_ft_residues     --- List of SwissProt resdiue numbers in 
+                                relevant features
+           
+
+   09.12.21    Original    By: BAM
+
+   """
+   #get list of lines from the file
+   sprot_lines = read_file(sprot_file)
+   #make list of relevant features
+   
+
+   #list of residues in relevant features
+   sp_ft_residues = []
+
+
+   for line in sprot_lines:
+      #filter for lines with residue numbers
+      feature_line = re.findall("^FT   [A-Z]", line)
+
+      if feature_line:
+         #replace multiples of whitespaces
+         line = ' '.join(line.split())
+         #split the string by white spaces
+         info_list = line.split()
+
+         if '..' in info_list[2]:
+            #for features with range of residues
+            res_range_str = info_list[2].replace('..', ' ')
+            res_range = res_range_str.split() 
+            start = int(res_range[0])
+            stop = int(res_range[1])
+            #get numbers of all the residues
+            residues = range(start, stop)
+            #add everything from start to stop to the sp_ft_residues list
+            sp_ft_residues.extend(residues)
+            
+         else:
+
+            #for features at one residue
+            if len(info_list) == 3:
+               start = int(info_list[2])
+               stop = int(info_list[2])
+               #add the residue to the sp_ft_residues list
+               sp_ft_residues.append(start)
+
+            #for features with residue numbers separated by spaces
+            elif len(info_list) == 4:
+               start = int(info_list[2])
+               stop = int(info_list[3])
+               #add the two residues to the sp_ft_residues list
+               sp_ft_residues.append(start)
+               sp_ft_residues.append(stop)
+
+
+
+
+#*************************************************************************
 def check_feature (sprot_file, res_of_interest):
    """ Checks if the line refers to a feature, if the feature is relevant 
    and if the residue of interest is in the range of the feature. Prints 
