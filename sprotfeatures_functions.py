@@ -174,7 +174,8 @@ def pdb_sws (uniprot_ac, uniprot_resid):
    pdb_infos = []
 
    #get PDB codes corresponding to the UniProt accession number using PDBSWS
-   pdb_file = urlopen(http://www.bioinf.org.uk/servers/pdbsws/query.cgi?plain=1&qtype=ac&id="+uniprot_ac+"&res="+uniprot_resid+")
+   url = 'http://www.bioinf.org.uk/servers/pdbsws/query.cgi?plain=1&qtype=ac&id={}&res={}'.format(uniprot_ac, uniprot_resid)
+   pdb_file = urlopen(url)
    #split all PDBs infos
    pdb_file_parts = pdb_file.split('//')
 
