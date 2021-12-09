@@ -54,7 +54,7 @@ def read_url_sprot (sprot_id):
 
 
 #*************************************************************************
-def get_ft_residues (sprot_file, res_of_interest):
+def get_ft_residues (sprot_str, res_of_interest):
    """ Returns list of residues that are in relevant features based on 
    SwissProt file.
 
@@ -68,13 +68,32 @@ def get_ft_residues (sprot_file, res_of_interest):
 
    """
    #get list of lines from the file
-   sprot_lines = read_file(sprot_file)
+ 
    #make list of relevant features
 
 
    #list of residues in relevant features
    sp_ft_residues = []
 
+   #dictionary of relevant features
+   spfeatures = {
+      "NULL":      (0),
+      'ACT_SITE':  (2**0),
+      'BINDING':   (2**1),
+      'CA_BIND':   (2**2),
+      'DNA_BIND':  (2**3),
+      'NP_BIND':   (2**4),
+      'METAL':     (2**5),
+      'MOD_RES':   (2**6),
+      'CARBOHYD':  (2**7),
+      'MOTIF':     (2**8),
+      'LIPID':     (2**9),
+      'DISULFID':  (2**10),
+      'CROSSLNK':  (2**11)
+   }
+
+   #split sprot_file into lines
+   sprot_lines = sprot_str.split('\n')
 
    for line in sprot_lines:
       #filter for lines with residue numbers
@@ -86,33 +105,37 @@ def get_ft_residues (sprot_file, res_of_interest):
          #split the string by white spaces
          info_list = line.split()
 
-         if '..' in info_list[2]:
-            #for features with range of residues
-            res_range_str = info_list[2].replace('..', ' ')
-            res_range = res_range_str.split() 
-            start = int(res_range[0])
-            stop = int(res_range[1])
-            #get numbers of all the residues
-            residues = range(start, stop)
-            #add everything from start to stop to the sp_ft_residues list
-            sp_ft_residues.extend(residues)
-            
-         else:
+         if info_list[1] in spfeatures:
 
-            #for features at one residue
-            if len(info_list) == 3:
-               start = int(info_list[2])
-               stop = int(info_list[2])
-               #add the residue to the sp_ft_residues list
-               sp_ft_residues.append(start)
+            if '..' in info_list[2]:
+               #for features with range of residues
+               res_range_str = info_list[2].replace('..', ' ')
+               res_range = res_range_str.split() 
+               start = int(res_range[0])
+               stop = int(res_range[1])
+               #get numbers of all the residues
+               residues = range(start, stop)
+               #add everything from start to stop to the sp_ft_residues list
+               sp_ft_residues.extend(residues)
+               
+            else:
 
-            #for features with residue numbers separated by spaces
-            elif len(info_list) == 4:
-               start = int(info_list[2])
-               stop = int(info_list[3])
-               #add the two residues to the sp_ft_residues list
-               sp_ft_residues.append(start)
-               sp_ft_residues.append(stop)
+               #for features at one residue
+               if len(info_list) == 3:
+                  start = int(info_list[2])
+                  stop = int(info_list[2])
+                  #add the residue to the sp_ft_residues list
+                  sp_ft_residues.append(start)
+
+               #for features with residue numbers separated by spaces
+               elif len(info_list) == 4:
+                  start = int(info_list[2])
+                  stop = int(info_list[3])
+                  #add the two residues to the sp_ft_residues list
+                  sp_ft_residues.append(start)
+                  sp_ft_residues.append(stop)
+
+   return sp_ft_residues 
 
 
 
@@ -254,7 +277,7 @@ def pdb_sws (uniprot_ac, uniprot_resid):
    the given UniProt accession number.
 
    Input:   uniprot_ac      --- UniProt accession number  
-            uniprot_resid   --- Number for residue of interest in UniProt file
+            uniprot_resid   --- Number for residue of interest in UniProt file (integer)
    Output:  pdb_infos       --- list of PDB code, chain and resid relevant   
                                 to the UniProt accession number 
    
@@ -267,6 +290,9 @@ def pdb_sws (uniprot_ac, uniprot_resid):
    pdb_code = ''
    chain = ''
    resid = ''
+
+   #change integer into string
+   str(uniprot_resid)
 
    pdb_file_byt = read_url_pdbsws(uniprot_ac, uniprot_resid)
    #this is now a byte object - convert into string

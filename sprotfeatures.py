@@ -44,20 +44,31 @@ res_of_interest = int(sys.argv[2])
 
 
 #get SwissProt file based on uniprot_ac
-sprot_file = read_url_sprot(uniprot_ac)
+sprot_file_byt = read_url_sprot(uniprot_ac)
+#this is now a byte object - convert into string
+encoding = 'utf-8'
+sprot_str = sprot_file_byt.decode(encoding)
 
 
 #get list of residues in features
-sp_ft_residues = get_ft_residues(sprot_file, res_of_interest)
+#res_of_interest an integer here
+sp_ft_residues = get_ft_residues(sprot_str, res_of_interest)
+
 
 #get pdb code and residue number for the protein and residue of interest
-
 #list of PDB code, chain and residue number 
-pdb_info_res = pdb_sws(uniprot_ac, res_of_interest)
-#if doesnt work - bc res_of interest is an integer not a string from command line
+pdb_infos_res = pdb_sws(uniprot_ac, res_of_interest)
+print(pdb_infos_res)
 
 #get pdb residue numbers for the feature residues
+for residue in sp_ft_residues:
+   #list of PDB infos for one residue
+   pdb_infos_ft = pdb_sws(uniprot_ac, residue)
 
+   #combine lists for a PDB info for all feature residues list
+   pdb_infos_fts = []
+   pdb_infos_fts.extend(pdb_infos_ft)
+   #DO NOT PRINT THIS - TAKES AGES
 
 
 #get coordinates of atoms in residue of interest
