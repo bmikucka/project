@@ -156,11 +156,30 @@ def check_feature (sprot_file, res_of_interest):
    return (outcome, mut_features, result)
 
 
+
+#*************************************************************************
+def read_url_file (uniprot_ac, uniprot_resid):
+   """Reads text file from url PDBSWS to get information on PDB files 
+   related to the UniProt accession number.
+
+   Input:   uniprot_ac      --- UniProt accession number  
+            uniprot_resid   --- Number for residue of interest in UniProt file
+   Output:  file            --- Text file from url as a string
+   
+   09.12.21    Original    By: BAM
+
+   """
+  
+   #get PDB codes corresponding to the UniProt accession number using PDBSWS
+   url = 'http://www.bioinf.org.uk/servers/pdbsws/query.cgi?plain=1&qtype=ac&id={}&res={}'.format(uniprot_ac, uniprot_resid)
+   file = urlopen(url)
+   return (file.read())
+
+
 #*************************************************************************
 def pdb_sws (uniprot_ac, uniprot_resid):
-   """Checks if the line refers to a feature, if the feature is relevant 
-   and if the residue of interest is in the range of the feature. Prints 
-   "ok" if the residue is not in a feature and "bad" if within a feature.
+   """ Returns PDB code, chain and residue number for all PBDs relevant to 
+   the given UniProt accession number.
 
    Input:   uniprot_ac      --- UniProt accession number  
             uniprot_resid   --- Number for residue of interest in UniProt file
@@ -170,12 +189,12 @@ def pdb_sws (uniprot_ac, uniprot_resid):
    09.12.21    Original    By: BAM
 
    """
+
    #make list of PDB codes
    pdb_infos = []
 
-   #get PDB codes corresponding to the UniProt accession number using PDBSWS
-   url = 'http://www.bioinf.org.uk/servers/pdbsws/query.cgi?plain=1&qtype=ac&id={}&res={}'.format(uniprot_ac, uniprot_resid)
-   pdb_file = urlopen(url)
+   pdb_file = read_url_file(uniprot_ac, uniprot_resid)
+
    #split all PDBs infos
    pdb_file_parts = pdb_file.split('//')
 

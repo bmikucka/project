@@ -43,6 +43,6 @@ from sprotfeatures_functions import (read_file, check_feature, pdb_sws)
 
 #print (check_feature (sprot_file, res_of_interest))
 
-pdb_sws(P03952, 400)
+pdb_sws('P03952', '400')
 
 
