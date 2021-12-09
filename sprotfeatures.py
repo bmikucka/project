@@ -32,7 +32,8 @@ V1.0  16.11.21    Original    By: BAM
 import sys
 import re
 from urllib.request import urlopen
-from sprotfeatures_functions import (read_file, get_ft_residues, check_feature, read_url_file, pdb_sws)
+from sprotfeatures_functions import (read_file, read_url_sprot, 
+   get_ft_residues, check_feature, read_url_pdbsws, pdb_sws)
 
 #*************************************************************************
 
@@ -43,7 +44,7 @@ res_of_interest = int(sys.argv[2])
 
 
 #get SwissProt file based on uniprot_ac
-
+sprot_file = read_url_sprot(uniprot_ac)
 
 
 #get list of residues in features
@@ -51,9 +52,9 @@ sp_ft_residues = get_ft_residues(sprot_file, res_of_interest)
 
 #get pdb code and residue number for the protein and residue of interest
 
-   #list of PDB code, chain and residue number 
+#list of PDB code, chain and residue number 
 pdb_info_res = pdb_sws(uniprot_ac, res_of_interest)
-   #if doesnt work - bc res_of interest is an integer not a string from command line
+#if doesnt work - bc res_of interest is an integer not a string from command line
 
 #get pdb residue numbers for the feature residues
 

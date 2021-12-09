@@ -46,6 +46,14 @@ def read_file (filename):
       return file_lines
 
 #*************************************************************************
+def read_url_sprot (sprot_id):
+
+   url = 'https://www.uniprot.org/uniprot/{}.txt'.format(sprot_id)
+   file = urlopen(url)
+   return (file.read())
+
+
+#*************************************************************************
 def get_ft_residues (sprot_file, res_of_interest):
    """ Returns list of residues that are in relevant features based on 
    SwissProt file.
@@ -62,7 +70,7 @@ def get_ft_residues (sprot_file, res_of_interest):
    #get list of lines from the file
    sprot_lines = read_file(sprot_file)
    #make list of relevant features
-   
+
 
    #list of residues in relevant features
    sp_ft_residues = []
@@ -222,7 +230,7 @@ def check_feature (sprot_file, res_of_interest):
 
 
 #*************************************************************************
-def read_url_file (uniprot_ac, uniprot_resid):
+def read_url_pdbsws (uniprot_ac, uniprot_resid):
    """Reads text file from url PDBSWS to get information on PDB files 
    related to the UniProt accession number.
 
@@ -234,7 +242,6 @@ def read_url_file (uniprot_ac, uniprot_resid):
 
    """
   
-   #get PDB codes corresponding to the UniProt accession number using PDBSWS
    url = 'http://www.bioinf.org.uk/servers/pdbsws/query.cgi?plain=1&qtype=ac&id={}&res={}'.format(uniprot_ac, uniprot_resid)
    file = urlopen(url)
    return (file.read())
@@ -261,7 +268,7 @@ def pdb_sws (uniprot_ac, uniprot_resid):
    chain = ''
    resid = ''
 
-   pdb_file_byt = read_url_file(uniprot_ac, uniprot_resid)
+   pdb_file_byt = read_url_pdbsws(uniprot_ac, uniprot_resid)
    #this is now a byte object - convert into string
    encoding = 'utf-8'
    pdb_file_str = pdb_file_byt.decode(encoding)
