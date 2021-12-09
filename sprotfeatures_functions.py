@@ -177,6 +177,7 @@ def read_url_file (uniprot_ac, uniprot_resid):
 
 
 #*************************************************************************
+
 def pdb_sws (uniprot_ac, uniprot_resid):
    """ Returns PDB code, chain and residue number for all PBDs relevant to 
    the given UniProt accession number.
@@ -192,30 +193,43 @@ def pdb_sws (uniprot_ac, uniprot_resid):
 
    #make list of PDB codes
    pdb_infos = []
+   pdb_code = ''
+   chain = ''
+   resid = ''
 
-   pdb_file = read_url_file(uniprot_ac, uniprot_resid)
+   pdb_file_byt = read_url_file(uniprot_ac, uniprot_resid)
+   #this is now a byte object - convert into string
+   encoding = 'utf-8'
+   pdb_file_str = pdb_file_byt.decode(encoding)
 
-   #split all PDBs infos
-   pdb_file_parts = pdb_file.split('//')
+   #split into list of parts for each PDB chain
+   pdb_file_parts = pdb_file_str.split('//')
 
-   #for each part of the file
+   #for each part of the file read each line
    for file_part in pdb_file_parts:
       #split into lines
-      line = file_part.split('/n')
+      line = file_part.split('\n')
       
       #from each PDB info part get the pdb code, chain, and resid
-      for line in file_part:
-         if line.startswith('PDB:'):
-            pdb_code = line[5:8]
-         elif line.startswith('CHAIN:'):
-            chain = line[7]
-         elif line.startswith('RESID'):
-            resid = line[7:8]
-         #get the 3 strings into a list
-         infos = [pdb_code, chain, resid]
+      for x in line:
+         if x.startswith('PDB:'):
+            #split the line into individual words
+            words = x.split(' ')
+            #thefirst word is PDB:, second is the actual code
+            pdb_code = words[1]
+            #repeat for chain and resid
+         elif x.startswith('CHAIN:'):
+            words = x.split(' ')
+            chain = words[1]
+         elif x.startswith('RESID'):
+            words = x.split(' ')
+            resid = words[1]
 
-         #add the list to the list of infos
-         pdb_infos.append(infos)
+      #get the 3 strings into a list, these represent info on one PDB chain
+      infos = [pdb_code, chain, resid]
+
+      #add the list to the list of infos
+      pdb_infos.append(infos)
 
    return pdb_infos
 
