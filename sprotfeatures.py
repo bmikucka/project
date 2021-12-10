@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+
 
 """
 Program: sprotfeatures
@@ -32,9 +32,9 @@ V1.0  16.11.21    Original    By: BAM
 import sys
 import re
 from urllib.request import urlopen
-#import atomium
+import atomium
 from sprotfeatures_functions import (read_file, read_url_sprot, 
-   get_ft_residues, check_feature, read_url_pdbsws, pdb_sws)
+   get_ft_residues, check_feature, read_url_pdbsws, pdb_sws, get_best_distance)
 
 #*************************************************************************
 
@@ -95,7 +95,7 @@ pdb_infos_fts = temp_list
 #get the shortest distance between an atom in residue of interest and
 #an atom in a residue in a feature 
 
-(d, ft_residue, ft_atom, res_atom) = get_best_distance (pdb_infos_res, pdb_infos_fts)
+(d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb) = get_best_distance (pdb_infos_res, pdb_infos_fts)
 
 #d: shortest distance between atoms
 #ft_residue: PDB residue number of the feature residue closest to the residue of interest

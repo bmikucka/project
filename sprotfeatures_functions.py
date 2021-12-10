@@ -383,29 +383,29 @@ def get_best_distance (pdb_infos_res, pdb_infos_fts):
    #unpack the list to get info on residue of interest
    for x in pdb_infos_res:
       pdb_code = x[0]
-      chain_num = x[1]
-      res_num = x[2]
+      chain_id = x[1]
+      residue_num = x[2]
       #get the corresponding pdb file
-      pdb = atomium.fetch(pdb_code)
+      model = atomium.fetch(pdb_code).model
       #is this case sensitive?
+      chain = model.chain(chain_id)
+      residue = chain.residue(f"{chain_id}.{residue_num}")
 
       #make a list of feature residue numbers that will be compared in 
       #this PDB and chain combination
       ft_residues = []
 
-
       #make a lits of atoms corresponding to that residue 
       res_atoms = []
-      res_atoms = pdb.model.chain(chain_num).residue(res_num).atoms()
-      #does not work
-      #list of tuples(?) - format the output of this
+      for atom in residue.atoms():
+         res_atoms.append(atom.id)
 
       for y in pdb_infos_fts:
          #for each residue from a feature
          
          for z in y:
             #for each list with info about that residue (list in a list)
-            if z[0] == pdb_code and z[1] == chain_num:
+            if z[0] == pdb_code and z[1] == chain_id:
                #compare only between the same PDBs and chains
                #add the residue number into the list
                ft_residues.append(z[2])
@@ -414,10 +414,13 @@ def get_best_distance (pdb_infos_res, pdb_infos_fts):
 
       #dictionary with residue numbers as keys and atom numbers in lists as values
       ft_atoms = {}
+      atoms = []
       #get atom number for each residue
       for i in ft_residues:
-         atoms = pdb.model.chain(chain_num).residue(i).atoms()
-         #need to format this and make a list of just numbers
+         residue = chain.residue(f"{chain_id}.{i}")
+         for atom in residue.atoms():
+            atoms.append(atom.id)
+
          #add this to the dictionary
          ft_atoms[i] = atoms
 
@@ -428,21 +431,25 @@ def get_best_distance (pdb_infos_res, pdb_infos_fts):
       #atoms of feature residues
       for i in res_atoms:
          #i is an atom of residue of interest
+         i_int = int(i)
          for key in ft_atoms:
             #key is a residue in features
             for j in ft_atoms[key]:
-               #jft_atoms[key] is the list of atoms - j is one atom number
+               #ft_atoms[key] is the list of atoms - j is one atom number
                #get the distance between atom of interest and atom in feature residue
-               dd = pdb_code.model.atom(i).distance_to(pdb_code.model.atom(j))
+               j_int = int(j)
+               dd = pdb_code.model.atom(i_int).distance_to(pdb_code.model.atom(j_int))
                if dd < d:
                   #if this distance is smaller than any of the previous ones recorded:
                   d = dd 
                   ft_atom = j
                   ft_residue = key
                   res_atom = i
+                  relevant_pdb = pdb_code
+                  relevant_chain = chain_num
 
 
-   return (d, ft_residue, ft_atom, res_atom)
+   return (d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb)
 
 
 #*************************************************************************
