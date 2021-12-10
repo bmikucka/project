@@ -90,12 +90,17 @@ for i in pdb_infos_fts:
       temp_list.remove(i)
 
 pdb_infos_fts = temp_list
-print(pdb_infos_fts)
 
 
-#for each PDB run this funciton that gets the PDB file - 
-#get the atom numbers for all the feature residues and the residue of interest (in all the chains of that PDB)
-#get distance for that PDB
+#get the shortest distance between an atom in residue of interest and
+#an atom in a residue in a feature 
+
+(d, ft_residue, ft_atom, res_atom) = get_best_distance (pdb_infos_res, pdb_infos_fts)
+
+#d: shortest distance between atoms
+#ft_residue: PDB residue number of the feature residue closest to the residue of interest
+#ft_atom: atom number 
+#res_atom: atom in the residue of interest that is closest to the feature
 
 
 

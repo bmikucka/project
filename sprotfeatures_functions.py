@@ -357,12 +357,11 @@ def pdb_sws (uniprot_ac, uniprot_resid):
 
 
 #*************************************************************************
-def get_distance (pdb_infos_res, pdb_infos_fts):
+def get_best_distance (pdb_infos_res, pdb_infos_fts):
    """ Returns text file of PDB for the pdb_code used as input
 
-   Input:   pdb_code     --- 4 letter PDB code
-            residue --- residue number
-   Output:  pdb_file     --- text contents of PDB file as string
+   Input:   
+   Output:  
    
    10.12.21    Original    By: BAM
 
@@ -400,49 +399,38 @@ def get_distance (pdb_infos_res, pdb_infos_fts):
 
       #now have feature residue number list and the residue of interest number
 
-      #get atom number for each residue - make a dictionary
-      
+      #dictionary with residue numbers as keys and atom numbers in lists as values
+      ft_atoms = {}
+      #get atom number for each residue
       for i in ft_residues:
+         atoms = pdb.model.chain(chain_num).residue(i).atoms()
+         #need to format this and make a list of just numbers
+         #add this to the dictionary
+         ft_atoms[i] = atoms
 
-               
-               
+      d = 50 #start distance
+      #could have this as a variable
 
+      #for this residue number get distance between all its atoms and 
+      #atoms of feature residues
+      for i in res_atoms:
+         #i is an atom of residue of interest
+         for key in ft_atoms:
+            #key is a residue in features
+            for j in ft_atoms[key]:
+               #jft_atoms[key] is the list of atoms - j is one atom number
+               #get the distance between atom of interest and atom in feature residue
+               dd = pdb_code.model.atom(i).distance_to(pdb_code.model.atom(j))
+               if dd < d:
+                  #if this distance is smaller than any of the previous ones recorded:
+                  d = dd 
+                  ft_atom = j
+                  ft_residue = key
+                  res_atom = i
 
-
-
-
-   
-   atoms_residue = []
-
-   #ft_infos gives chain and residues for each residue in a feature
-   atoms_ft_residues = {
-      #resdiue number: [atom numbers]
-   }
-
-   #shortest distance 
-   d = 50
-   #residue (PDB number) in a feature that is closest to residue of interest
-   ft_residue = ''
-   #atom in feature residue that is closest to residue of interest
-   ft_atom = ''
-   #atom in residue of interest that is closest to a feature
-   res_atom = ''
-
-
-   #for all atoms in the residue of interest check the distance to atoms of features
-   for a in atoms_residue:
-      #check all the residues in features
-      for residue in ft_residues:
-         #check all the atoms in each residue in features
-         for b in atoms_ft_residues:
-            dd = pdb_code.model.atom(a).distance_to(pdb_code.model.atom(b))
-            #if the distance is smaller than the previous ones it is recorded
-            if dd < d:
-               d = dd 
-               ft_atom = b
-               res_atom = a
-               ft_residue = residue
 
    return (d, ft_residue, ft_atom, res_atom)
 
+
+#*************************************************************************
 
