@@ -103,5 +103,11 @@ pdb_infos_fts = temp_list
 #res_atom: atom in the residue of interest that is closest to the feature
 
 
+#from ft_residue (PDB numbers) get what the feature is
+#from PBD to SwissProt
+
+#From SwissProt to feature name
+
+
 
 

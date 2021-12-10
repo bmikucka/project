@@ -358,10 +358,23 @@ def pdb_sws (uniprot_ac, uniprot_resid):
 
 #*************************************************************************
 def get_best_distance (pdb_infos_res, pdb_infos_fts):
-   """ Returns text file of PDB for the pdb_code used as input
+   """ Processes lists of information from PDB about residue of interest 
+   and features, gets shortest distance between a residue of interest atom
+   and one of the feature atoms.
 
-   Input:   
-   Output:  
+   Input:   pdb_infos_res --- list of lists with 3 items (PDB code, chain
+                              identifier, and residue number) for the residue 
+                              of interest
+            pdb_infos_fts --- list of lists for each feature with lists ith 
+                              3 items (PDB code, chain identifier, and residue 
+                              number) for the features
+   Output:  d             --- shortest distance between 2 atoms (Angstrom)
+            ft_residue    --- the feature residue (PDB number) closest to 
+                              residue of interest
+            ft_atom       --- the feature residue atom closest to 
+                              residue of interest
+            res_atom      --- the atom number in the residue of interest 
+                              closest to the closest feature
    
    10.12.21    Original    By: BAM
 
