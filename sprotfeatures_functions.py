@@ -29,6 +29,7 @@ V1.0  09.12.21    Original    By: BAM
 import sys
 import re
 from urllib.request import urlopen
+import atomium
 
 #*************************************************************************
 def read_file (filename):
@@ -356,4 +357,92 @@ def pdb_sws (uniprot_ac, uniprot_resid):
 
 
 #*************************************************************************
+def get_distance (pdb_infos_res, pdb_infos_fts):
+   """ Returns text file of PDB for the pdb_code used as input
+
+   Input:   pdb_code     --- 4 letter PDB code
+            residue --- residue number
+   Output:  pdb_file     --- text contents of PDB file as string
+   
+   10.12.21    Original    By: BAM
+
+   """
+
+   #unpack the list to get info on residue of interest
+   for x in pdb_infos_res:
+      pdb_code = x[0]
+      chain_num = x[1]
+      res_num = x[2]
+      #get the corresponding pdb file
+      pdb = atomium.fetch(pdb_code)
+      #is this case sensitive?
+
+      #make a list of feature residue numbers that will be compared in 
+      #this PDB and chain combination
+      ft_residues = []
+
+
+      #make a lits of atoms corresponding to that residue 
+      res_atoms = []
+      res_atoms = pdb.model.chain(chain_num).residue(res_num).atoms()
+      #does not work
+      #list of tuples(?) - format the output of this
+
+      for y in pdb_infos_fts:
+         #for each residue from a feature
+         
+         for z in y:
+            #for each list with info about that residue (list in a list)
+            if z[0] == pdb_code and z[1] == chain_num:
+               #compare only between the same PDBs and chains
+               #add the residue number into the list
+               ft_residues.append(z[2])
+
+      #now have feature residue number list and the residue of interest number
+
+      #get atom number for each residue - make a dictionary
+      
+      for i in ft_residues:
+
+               
+               
+
+
+
+
+
+   
+   atoms_residue = []
+
+   #ft_infos gives chain and residues for each residue in a feature
+   atoms_ft_residues = {
+      #resdiue number: [atom numbers]
+   }
+
+   #shortest distance 
+   d = 50
+   #residue (PDB number) in a feature that is closest to residue of interest
+   ft_residue = ''
+   #atom in feature residue that is closest to residue of interest
+   ft_atom = ''
+   #atom in residue of interest that is closest to a feature
+   res_atom = ''
+
+
+   #for all atoms in the residue of interest check the distance to atoms of features
+   for a in atoms_residue:
+      #check all the residues in features
+      for residue in ft_residues:
+         #check all the atoms in each residue in features
+         for b in atoms_ft_residues:
+            dd = pdb_code.model.atom(a).distance_to(pdb_code.model.atom(b))
+            #if the distance is smaller than the previous ones it is recorded
+            if dd < d:
+               d = dd 
+               ft_atom = b
+               res_atom = a
+               ft_residue = residue
+
+   return (d, ft_residue, ft_atom, res_atom)
+
 

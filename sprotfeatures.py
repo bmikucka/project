@@ -5,7 +5,7 @@ Program: sprotfeatures
 File:    sprotfeatures.py
 
 Version:    V1.0
-Date:       16.11.2021
+Date:       09.12.2021
 Function:   Identifies if residue of interest is marked with a relevant 
             feature in a SwissProt file
 
@@ -32,6 +32,7 @@ V1.0  16.11.21    Original    By: BAM
 import sys
 import re
 from urllib.request import urlopen
+#import atomium
 from sprotfeatures_functions import (read_file, read_url_sprot, 
    get_ft_residues, check_feature, read_url_pdbsws, pdb_sws)
 
@@ -49,6 +50,7 @@ sprot_file_byt = read_url_sprot(uniprot_ac)
 encoding = 'utf-8'
 sprot_str = sprot_file_byt.decode(encoding)
 
+#run check_feature first?
 
 #get list of residues in features
 #res_of_interest an integer here
@@ -60,6 +62,14 @@ sp_ft_residues = get_ft_residues(sprot_str, res_of_interest)
 pdb_infos_res = pdb_sws(uniprot_ac, res_of_interest)
 #works for P03952(uniprot - works for both) but not for Q6GZV6(swissprot-only for sprot)
 
+#remove repeats 
+temp_list = []
+for i in pdb_infos_res:
+    if i not in temp_list:
+        temp_list.append(i)
+pdb_infos_res = temp_list
+
+
 #get pdb residue numbers for the feature residues
 pdb_infos_fts = []
 for residue in sp_ft_residues:
@@ -67,16 +77,26 @@ for residue in sp_ft_residues:
    pdb_infos_ft = pdb_sws(uniprot_ac, residue)
    #combine lists for a PDB info for all feature residues list
    pdb_infos_fts.append(pdb_infos_ft)
+   #will have empty lists if the SwissProt residue doesn't have a PDB residue equivalent
 
-#will have empty lists if the SwissProt residue doesn't have a PDB residue equivalent
+#remove repeats
+temp_list = []
+for i in pdb_infos_fts:
+
+   if i not in temp_list:
+      temp_list.append(i)
+   #remove empty lists (when SwissProt residues are not in the PDB file)
+   if i == [['', '', '']]:
+      temp_list.remove(i)
+
+pdb_infos_fts = temp_list
+print(pdb_infos_fts)
 
 
-#get coordinates of atoms in residue of interest
+#for each PDB run this funciton that gets the PDB file - 
+#get the atom numbers for all the feature residues and the residue of interest (in all the chains of that PDB)
+#get distance for that PDB
 
 
 
-#get coordinates of atoms for residues in features
 
-
-
-#calculate distances between atoms in residue of interest and atoms in feature residues
