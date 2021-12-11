@@ -400,6 +400,7 @@ def get_best_distance (pdb_infos_res, pdb_infos_fts):
       for atom in residue.atoms():
          res_atoms.append(atom.id)
 
+
       for y in pdb_infos_fts:
          #for each residue from a feature
          
@@ -424,7 +425,7 @@ def get_best_distance (pdb_infos_res, pdb_infos_fts):
 
          #add this to the dictionary
          ft_atoms[i] = atoms
-      print (ft_atoms)
+
 
       d = 50 #start distance
       #could have this as a variable
@@ -439,7 +440,7 @@ def get_best_distance (pdb_infos_res, pdb_infos_fts):
             for j in ft_atoms[key]:
                #ft_atoms[key] is the list of atoms - j is one atom number
                #get the distance between atom of interest and atom in feature residue
-               dd = pdb_code.model.atom(int(i)).distance_to(pdb_code.model.atom(int(j)))
+               dd = model.atom(int(i)).distance_to(model.atom(int(j)))
                #something is wrong here
                if dd < d:
                   #if this distance is smaller than any of the previous ones recorded:
@@ -448,7 +449,7 @@ def get_best_distance (pdb_infos_res, pdb_infos_fts):
                   ft_residue = key
                   res_atom = i
                   relevant_pdb = pdb_code
-                  relevant_chain = chain_num
+                  relevant_chain = chain_id
 
 
    return (d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb)

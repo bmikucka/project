@@ -40,6 +40,8 @@ from sprotfeatures_functions import (read_file, read_url_sprot,
 
 #take uniprot accession number and residue number from command line
 
+print('running the program...')
+
 uniprot_ac = sys.argv[1]
 res_of_interest = int(sys.argv[2])
 
@@ -97,6 +99,8 @@ pdb_infos_fts = temp_list
 
 (d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb) = get_best_distance (pdb_infos_res, pdb_infos_fts)
 
+print (d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb)
+
 #d: shortest distance between atoms
 #ft_residue: PDB residue number of the feature residue closest to the residue of interest
 #ft_atom: atom number 
@@ -108,6 +112,7 @@ pdb_infos_fts = temp_list
 
 #From SwissProt to feature name
 
+print ('done running')
 
 
 
