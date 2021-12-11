@@ -34,7 +34,8 @@ import re
 from urllib.request import urlopen
 import atomium
 from sprotfeatures_functions import (read_file, read_url_sprot, 
-   get_ft_residues, check_feature, read_url_pdbsws, pdb_sws, get_best_distance)
+   get_ft_residues, check_feature, read_url_swspdb, sws_pdb, get_best_distance, 
+   read_url_pdbsws, pdb_sws)
 
 #*************************************************************************
 
@@ -61,7 +62,7 @@ sp_ft_residues = get_ft_residues(sprot_str, res_of_interest)
 
 #get pdb code and residue number for the protein and residue of interest
 #list of PDB codes, chains and residue numbers 
-pdb_infos_res = pdb_sws(uniprot_ac, res_of_interest)
+pdb_infos_res = sws_pdb(uniprot_ac, res_of_interest)
 #works for P03952(uniprot - works for both) but not for Q6GZV6(swissprot-only for sprot)
 
 #remove repeats 
@@ -76,7 +77,7 @@ pdb_infos_res = temp_list
 pdb_infos_fts = []
 for residue in sp_ft_residues:
    #list of PDB infos for one residue
-   pdb_infos_ft = pdb_sws(uniprot_ac, residue)
+   pdb_infos_ft = sws_pdb (uniprot_ac, residue)
    #combine lists for a PDB info for all feature residues list
    pdb_infos_fts.append(pdb_infos_ft)
    #will have empty lists if the SwissProt residue doesn't have a PDB residue equivalent
@@ -99,18 +100,26 @@ pdb_infos_fts = temp_list
 
 (d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb) = get_best_distance (pdb_infos_res, pdb_infos_fts)
 
-print (d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb)
 
 #d: shortest distance between atoms
 #ft_residue: PDB residue number of the feature residue closest to the residue of interest
 #ft_atom: atom number 
 #res_atom: atom in the residue of interest that is closest to the feature
+#relevant_chain: chain identification 
+#relevant_pdb: PDB code the atoms/residues are from
+
+#ft residue number from PBD to SwissProt
+(sprot_ac, sprot_residue) = pdb_sws (relevant_pdb, relevant_chain, ft_residue)
+
+#From SwissProt AC and residue number to feature name
 
 
-#from ft_residue (PDB numbers) get what the feature is
-#from PBD to SwissProt
 
-#From SwissProt to feature name
+print ('The shortest distance between the mutated residue and a feature is:')
+print (d)
+
+#print ('The feature is:')
+#print (feature)
 
 print ('done running')
 

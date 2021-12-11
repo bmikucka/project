@@ -61,7 +61,7 @@ def get_ft_residues (sprot_str, res_of_interest):
 
    Input:   sprot_file      --- Swiss Prot File   
             res_of_interest --- Number of residue being checked
-   Output:  sp_ft_residues     --- List of SwissProt resdiue numbers in 
+   Output:  sp_ft_residues  --- List of SwissProt resdiue numbers in 
                                 relevant features
            
 
@@ -278,13 +278,13 @@ def check_feature (sprot_file, res_of_interest):
 
 
 #*************************************************************************
-def read_url_pdbsws (uniprot_ac, uniprot_resid):
+def read_url_swspdb (uniprot_ac, uniprot_resid):
    """Reads text file from url PDBSWS to get information on PDB files 
    related to the UniProt accession number.
 
    Input:   uniprot_ac      --- UniProt accession number  
             uniprot_resid   --- Number for residue of interest in UniProt file
-   Output:  file            --- Text file from url as a string
+   Output:  file            --- Text file from url as a byt
    
    09.12.21    Original    By: BAM
 
@@ -297,7 +297,7 @@ def read_url_pdbsws (uniprot_ac, uniprot_resid):
 
 #*************************************************************************
 
-def pdb_sws (uniprot_ac, uniprot_resid):
+def sws_pdb (uniprot_ac, uniprot_resid):
    """ Returns PDB code, chain and residue number for all PBDs relevant to 
    the given UniProt accession number.
 
@@ -319,7 +319,7 @@ def pdb_sws (uniprot_ac, uniprot_resid):
    #change integer into string
    str(uniprot_resid)
 
-   pdb_file_byt = read_url_pdbsws(uniprot_ac, uniprot_resid)
+   pdb_file_byt = read_url_swspdb(uniprot_ac, uniprot_resid)
    #this is now a byte object - convert into string
    encoding = 'utf-8'
    pdb_file_str = pdb_file_byt.decode(encoding)
@@ -456,4 +456,60 @@ def get_best_distance (pdb_infos_res, pdb_infos_fts):
 
 
 #*************************************************************************
+def read_url_pdbsws (pdb, chain, pdb_residue):
+   """ Get UniProt id and residue number equivalents from a specified PDB 
+   residue.
 
+   Input:   pdb            --- 4 letter PDB code
+            chain          --- Chain ID
+            pdb_residue    --- PDB Residue number
+    Output:  file            --- Text file from url as a byt
+
+   11.12.21    Original    By: BAM
+
+   """
+   url = 'http://www.bioinf.org.uk/servers/pdbsws/query.cgi?plain=1&qtype=pdb&id={}&chain={}&res={}'.format(pdb, chain, pdb_residue)
+   file = urlopen(url)
+   return (file.read())
+
+
+#*************************************************************************
+def pdb_sws (pdb, chain, pdb_residue):
+   """ Get UniProt accession number and residue number equivalents from a 
+   specified PDB residue.
+
+   Input:   pdb            --- 4 letter PDB code
+            chain          --- Chain ID
+            pdb_residue    --- PDB Residue number
+   Output:  sprot_residue  --- SwissProt residue number
+            sprot_ac       --- SwissProt AC
+
+   11.12.21    Original    By: BAM
+
+   """
+
+   info_byt = read_url_pdbsws (pdb, chain, pdb_residue)
+   #this is now a byte object - convert into string
+   encoding = 'utf-8'
+   info_str = info_byt.decode(encoding)
+
+   #split into lines
+   info_lines = info_str.split('\n')
+
+   #get the line that starts with AC: and UPCOUNT:
+   for line in info_lines:
+      if line.startswith('AC:'):
+         words = line.split(' ')
+         #get the second word in the line - the accession number
+         sprot_ac = words[1]
+      if line.startswith('UPCOUNT:'):
+         words = line.split(' ')
+         #get the residue number
+         sprot_residue = words [1]
+
+   return (sprot_ac, sprot_residue)
+
+
+#*************************************************************************
+
+  
