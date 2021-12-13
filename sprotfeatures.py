@@ -113,15 +113,17 @@ pdb_infos_fts = temp_list
 
 #From SwissProt AC and residue number to feature name
 
-
-
 print ('The shortest distance between the mutated residue and a feature is:')
 print (d)
+
+
+print ('The SwissPort residue number is:')
+print (sprot_residue)
 
 #print ('The feature is:')
 #print (feature)
 
-print ('done running')
+print ('finished')
 
 
 
