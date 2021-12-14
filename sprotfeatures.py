@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!//usr/local/Caskroom/miniconda/base/bin/python3
 
 """
 Program: sprotfeatures
