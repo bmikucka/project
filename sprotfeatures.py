@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3
 
 """
 Program: sprotfeatures
@@ -35,7 +35,7 @@ from urllib.request import urlopen
 import atomium
 from sprotfeatures_functions import (read_file, read_url_sprot, 
    get_ft_residues, check_feature, read_url_swspdb, sws_pdb, get_best_distance, 
-   read_url_pdbsws, pdb_sws)
+   read_url_pdbsws, pdb_sws, residue_to_feature)
 
 #*************************************************************************
 
@@ -112,16 +112,16 @@ pdb_infos_fts = temp_list
 (sprot_ac, sprot_residue) = pdb_sws (relevant_pdb, relevant_chain, ft_residue)
 
 #From SwissProt AC and residue number to feature name
+feature = residue_to_feature (sprot_residue, sprot_ac)
 
 print ('The shortest distance between the mutated residue and a feature is:')
 print (d)
 
-
 print ('The SwissPort residue number is:')
 print (sprot_residue)
 
-#print ('The feature is:')
-#print (feature)
+print ('The feature is:')
+print (feature)
 
 print ('finished')
 

@@ -524,7 +524,11 @@ def residue_to_feature (res_id, sprot_ac):
   
 
   #dictionary of relevant features
-   spfeatures = {
+
+  res_id = int(res_id)
+
+
+  spfeatures = {
       "NULL":      (0),
       'ACT_SITE':  (2**0),
       'BINDING':   (2**1),
@@ -538,7 +542,9 @@ def residue_to_feature (res_id, sprot_ac):
       'LIPID':     (2**9),
       'DISULFID':  (2**10),
       'CROSSLNK':  (2**11)
-   }
+      }
+
+
 
 
   #get the SwissProt file
@@ -546,41 +552,51 @@ def residue_to_feature (res_id, sprot_ac):
 
   encoding = 'utf-8'
   #make into a string
-  sprot_str = sprot_file_byt.decode(encoding)
+  sprot_str = file.decode(encoding)
 
   #split text into lines
   sprot_lines = sprot_str.split('\n')
 
-   for line in sprot_lines:
-      #filter for lines with features
-      feature_line = re.findall("^FT   [A-Z]", line)
+  for line in sprot_lines:
+   #filter for lines with features
+   feature_line = re.findall("^FT   [A-Z]", line)
 
-      if feature_line:
-         #replace multiples of whitespaces
-         line = ' '.join(line.split())
-         #split the string by white spaces
-         info_list = line.split()
+   if feature_line:
+      #replace multiples of whitespaces
+      line = ' '.join(line.split())
+      #split the string by white spaces
+      info_list = line.split()
 
-         #check the lines with features of interest
-         if info_list[1] in spfeatures:
-            #for features where the residue numbers are the features
-            if info_list[1] = 'DISULFID' or 'CROSSLNK':
-               #if the number is separated by ..
-               if '..' in info_list[2]:
-                  info_list[2] = info_list[2].replace('..', ' ')
-               #now the residues should be separated by a space
-               residues = info_list[2].split()
+      #check the lines with features of interest
+      if info_list[1] in spfeatures:
+         #for features where the residue numbers are the features
+         if info_list[1] == 'DISULFID' or 'CROSSLNK':
+            #if the number is separated by ..
+            if '..' in info_list[2]:
+               residues = info_list[2].replace('..', ' ')
+               residues = residues.split()
                if residues[0] == res_id or residues[1] == res_id:
                   feature = info_list[1]
-
             else:
-               #if the number is separated by ..
-               if '..' in info_list[2]:
-                  info_list[2] = info_list[2].replace('..', ' ')
-               #now the residues should be separated by a space
+               #if separated by a space
                residues = info_list[2].split()
-               res_range = range (residues[0], residues[1])
-               if res_id in res_range:
+               if int(residues[0]) == res_id or int(residues[1]) == res_id:
+                  feature = info_list[1]
+
+         else:
+
+            #if the number is separated by ..
+            if '..' in info_list[2]:
+               residues = info_list[2].replace('..', ' ')
+               residues = residues.split()
+               res_range = range(int(residues[0]), int(residues[1]))
+               if res_id in res_range: 
+                  feature = info_list[1]
+            else:
+               #if separated by a space
+               residues = info_list[2].split()
+               res_range = range(int(residues[0]), int(residues[1]))
+               if res_id in res_range: 
                   feature = info_list[1]
 
    return (feature)
