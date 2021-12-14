@@ -524,10 +524,6 @@ def residue_to_feature (res_id, sprot_ac):
   
 
   #dictionary of relevant features
-
-  res_id = int(res_id)
-
-
   spfeatures = {
       "NULL":      (0),
       'ACT_SITE':  (2**0),
@@ -557,6 +553,7 @@ def residue_to_feature (res_id, sprot_ac):
   #split text into lines
   sprot_lines = sprot_str.split('\n')
 
+
   for line in sprot_lines:
    #filter for lines with features
    feature_line = re.findall("^FT   [A-Z]", line)
@@ -566,42 +563,58 @@ def residue_to_feature (res_id, sprot_ac):
       line = ' '.join(line.split())
       #split the string by white spaces
       info_list = line.split()
-
+      
       #check the lines with features of interest
       if info_list[1] in spfeatures:
-         #for features where the residue numbers are the features
-         if info_list[1] == 'DISULFID' or 'CROSSLNK':
-            #if the number is separated by ..
+
+         #if the residues were separated by a space
+         if len(info_list) == 4:
+            #if a 2 residue feature
+            if (info_list[1] == 'DISULFID' or info_list[1] == 'CROSSLNK'):
+               if res_id == info_list[2] or res_id == info_list[3]:
+                  feature = info_list[1]
+                  return(feature)
+
+            #if a range residue feature
+            else: 
+               residue_numbers = range(int(info_list[2]), int(info_list[3]))
+               if int(res_id) in residue_rumbers:
+                  feature = info_list[1]
+                  return(feature)
+
+         #if it's a 1 residue feature or were split by .. and not a space
+         elif len(info_list) == 3:
+
+            #for multiple residue features
             if '..' in info_list[2]:
-               residues = info_list[2].replace('..', ' ')
-               residues = residues.split()
-               if residues[0] == res_id or residues[1] == res_id:
-                  feature = info_list[1]
+               
+               number_str = info_list[2].replace('..', ' ')
+               #number is a string of 2 number separated by a space
+               residues = number_str.split()
+               #residues is a list of the two residues in number
+               #now have a list of two residue numbers
+
+               #if a 2 residue feature
+               if (info_list[1] == 'DISULFID' or info_list[1] == 'CROSSLNK'):
+
+                  if res_id in residues:
+                     feature = info_list[1]
+                     return (feature)
+
+               #if a feature across the range of residues
+               else:
+                  residue_numbers = range(int(residues[0]), int(resdiues[1]))
+                  if int(res_id) in residue_rumbers:
+                     feature = info_list[1]
+                     return(feature)
+
+            #for single residue features
             else:
-               #if separated by a space
-               residues = info_list[2].split()
-               if int(residues[0]) == res_id or int(residues[1]) == res_id:
+               if info_list[2] == res_id:
                   feature = info_list[1]
+                  return(feature)
 
-         else:
-
-            #if the number is separated by ..
-            if '..' in info_list[2]:
-               residues = info_list[2].replace('..', ' ')
-               residues = residues.split()
-               res_range = range(int(residues[0]), int(residues[1]))
-               if res_id in res_range: 
-                  feature = info_list[1]
-            else:
-               #if separated by a space
-               residues = info_list[2].split()
-               res_range = range(int(residues[0]), int(residues[1]))
-               if res_id in res_range: 
-                  feature = info_list[1]
-
-   return (feature)
-
-
+         
 #*************************************************************************
 
 
