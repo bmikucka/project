@@ -34,7 +34,7 @@ import re
 from urllib.request import urlopen
 import atomium
 from sprotfeatures_functions import (read_file, read_url_sprot, 
-   get_ft_residues, check_feature, read_url_swspdb, sws_pdb, get_best_distance, 
+   get_ft_residues, check_feature, read_url_swspdb, sws_pdb, feature_distance, 
    read_url_pdbsws, pdb_sws, residue_to_feature)
 
 #*************************************************************************
@@ -95,33 +95,30 @@ for i in pdb_infos_fts:
 pdb_infos_fts = temp_list
 
 
-#get the shortest distance between an atom in residue of interest and
-#an atom in a residue in a feature 
+#get the distance for each feature with the relevant information
+feature_infos_pdb = feature_distance (pdb_infos_res, pdb_infos_fts)
 
-(d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb) = get_best_distance (pdb_infos_res, pdb_infos_fts)
+#list with all the feature names and  distances from the residue of interest
+final_infos = []
 
+for feature in feature_infos_pdb:
+   #information on where the shortest distance is between residue and feature
+   min_dist = feature [0]
+   relevant_pdb = feature [1]
+   relevant_chain = feature [2]
+   relevant_ft_residue = feature [3]
 
-#d: shortest distance between atoms
-#ft_residue: PDB residue number of the feature residue closest to the residue of interest
-#ft_atom: atom number 
-#res_atom: atom in the residue of interest that is closest to the feature
-#relevant_chain: chain identification 
-#relevant_pdb: PDB code the atoms/residues are from
+   #get the SwissProt information
+   (sprot_ac, sprot_residue) = pdb_sws (relevant_pdb, relevant_chain, relevant_ft_residue)
 
-#ft residue number from PBD to SwissProt
-(sprot_ac, sprot_residue) = pdb_sws (relevant_pdb, relevant_chain, ft_residue)
+   #get feature name for this feature
+   feature_id = residue_to_feature (sprot_residue, sprot_ac)
 
-#From SwissProt AC and residue number to feature name
-feature = residue_to_feature (sprot_residue, sprot_ac)
+   #add to the list of the info including the feature name
+   final_infos.append([feature_id, min_dist, sprot_residue])
 
-print ('The shortest distance between the mutated residue and a feature is:')
-print (d)
+print (final_infos)
 
-print ('The SwissPort residue number is:')
-print (sprot_residue)
-
-print ('The feature is:')
-print (feature)
 
 print ('finished')
 

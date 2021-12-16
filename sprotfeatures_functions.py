@@ -357,102 +357,82 @@ def sws_pdb (uniprot_ac, uniprot_resid):
 
 
 #*************************************************************************
-def get_best_distance (pdb_infos_res, pdb_infos_fts):
+def feature_distance (pdb_infos_res, pdb_infos_fts):
    """ Processes lists of information from PDB about residue of interest 
    and features, gets shortest distance between a residue of interest atom
    and one of the feature atoms.
 
-   Input:   pdb_infos_res --- list of lists with 3 items (PDB code, chain
-                              identifier, and residue number) for the residue 
-                              of interest
-            pdb_infos_fts --- list of lists for each feature with lists ith 
-                              3 items (PDB code, chain identifier, and residue 
-                              number) for the features
-   Output:  d             --- shortest distance between 2 atoms (Angstrom)
-            ft_residue    --- the feature residue (PDB number) closest to 
-                              residue of interest
-            ft_atom       --- the feature residue atom closest to 
-                              residue of interest
-            res_atom      --- the atom number in the residue of interest 
-                              closest to the closest feature
+   Input:   pdb_infos_res     --- list of lists with 3 items (PDB code, chain
+                                  identifier, and residue number) for the residue 
+                                  of interest
+            pdb_infos_fts     --- list of lists for each feature with lists with 
+                                  3 items (PDB code, chain identifier, and residue 
+                                  number) for the features
+   Output:  feature_info_pdb  --- List with an item for each feature from the 
+                                  pdb_infos_fts list. Each item is a list 
+                                  with the smallest distance between the feature
+                                  and the residue of interest, the pdb and chain 
+                                  identifiers, and the residue number
+
    
    10.12.21    Original    By: BAM
 
    """
 
-   #unpack the list to get info on residue of interest
-   for x in pdb_infos_res:
-      pdb_code = x[0]
-      chain_id = x[1]
-      residue_num = x[2]
-      #get the corresponding pdb file
-      model = atomium.fetch(pdb_code).model
-      #is this case sensitive?
-      chain = model.chain(chain_id)
-      residue = chain.residue(f"{chain_id}.{residue_num}")
+   #list of info for each feature as output:
+   feature_infos_pdb = []
 
-      #make a list of feature residue numbers that will be compared in 
-      #this PDB and chain combination
-      ft_residues = []
+   #unpack the list of features
+   for feature in pdb_infos_fts:
+      min_dist = 1000 #reset the smallest distance after each feature
+      #for every feature in the protein
+      for x in feature:
+         #for every residue in the feature
+         pdb_code = x[0]
+         chain_id = x[1]
+         residue_num = x[2]
+         #get the corresponding pdb file
+         model = atomium.fetch(pdb_code).model
+         chain = model.chain(chain_id)
+         residue = chain.residue(f"{chain_id}.{residue_num}")
 
-      #make a lits of atoms corresponding to that residue 
-      res_atoms = []
-      for atom in residue.atoms():
-         res_atoms.append(atom.id)
-
-
-      for y in pdb_infos_fts:
-         #for each residue from a feature
-         
-         for z in y:
-            #for each list with info about that residue (list in a list)
-            if z[0] == pdb_code and z[1] == chain_id:
-               #compare only between the same PDBs and chains
-               #add the residue number into the list
-               ft_residues.append(z[2])
-
-      #now have feature residue number list and the residue of interest number
-
-      #dictionary with residue numbers as keys and atom numbers in lists as values
-      ft_atoms = {}
-      
-      #get atom number for each residue
-      for i in ft_residues:
-         atoms = []
-         residue = chain.residue(f"{chain_id}.{i}")
+         #all the atoms in that residue of the feature to be compared
+         ft_atoms = []
          for atom in residue.atoms():
-            atoms.append(atom.id)
+            ft_atoms.append(atom.id)
 
-         #add this to the dictionary
-         ft_atoms[i] = atoms
+         #now have list of atoms in that residue
+         #get all the atoms in the residue of interest in this pdb/chain id
 
+         for i in pdb_infos_res:
+            #only get distances for the residues numbers from the same pdb file
+            if i[0] == pdb_code and i[1] == chain_id:
+               the_residue = i[2]
 
-      d = 50 #start distance
-      #could have this as a variable
+               #get a list of atoms in that residue
+               res_atoms = []
+               residue = chain.residue(f"{chain_id}.{the_residue}")
+               for atom in residue.atoms():
+                  res_atoms.append(atom.id)
 
-      #for this residue number get distance between all its atoms and 
-      #atoms of feature residues
-      for i in res_atoms:
-         #i is an atom of residue of interest
-
-         for key in ft_atoms:
-            #key is a residue in features
-            for j in ft_atoms[key]:
-               #ft_atoms[key] is the list of atoms - j is one atom number
-               #get the distance between atom of interest and atom in feature residue
-               dd = model.atom(int(i)).distance_to(model.atom(int(j)))
-               #something is wrong here
-               if dd < d:
-                  #if this distance is smaller than any of the previous ones recorded:
-                  d = dd 
-                  ft_atom = j
-                  ft_residue = key
-                  res_atom = i
-                  relevant_pdb = pdb_code
-                  relevant_chain = chain_id
+               #get the distance between each atom combination
+               for a in ft_atoms:
+                  for b in res_atoms:
+                     d = model.atom(int(a)).distance_to(model.atom(int(b)))
+                     #record the smallest distance
+                     if d < min_dist:
+                        min_dist = d
+                        relevant_pdb = pdb_code
+                        relevant_chain = chain_id
+                        relevant_ft_residue = residue_num
 
 
-   return (d, ft_residue, ft_atom, res_atom, relevant_chain, relevant_pdb)
+      #record the smallest distance and the related info for that feature into the list 
+      feature_infos_pdb.append([min_dist, relevant_pdb, relevant_chain, relevant_ft_residue])
+
+   #loop through all the features in the pdb_infos_fts list
+   #list with an item for ech feature
+   return (feature_infos_pdb)
 
 
 #*************************************************************************
