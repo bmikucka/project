@@ -33,6 +33,7 @@ import sys
 import re
 from urllib.request import urlopen
 import atomium
+import json
 from sprotfeatures_functions import (read_file, read_url_sprot, 
    get_ft_residues, check_feature, read_url_swspdb, sws_pdb, feature_distance, 
    read_url_pdbsws, pdb_sws, residue_to_feature)
@@ -44,7 +45,9 @@ from sprotfeatures_functions import (read_file, read_url_sprot,
 print('running the program...')
 
 uniprot_ac = sys.argv[1]
-res_of_interest = (sys.argv[2])
+native_residue_id = sys.argv[2]
+mut_res_number = sys.argv[3]
+mutant_residue_id = sys.argv[4]
 
 
 #get SwissProt file based on uniprot_ac
@@ -57,15 +60,15 @@ sprot_str = sprot_file_byt.decode(encoding)
 #run check_feature first?
 
 #get list of residues in features
-#res_of_interest an integer here
-sp_ft_residues = get_ft_residues(sprot_str, int(res_of_interest))
+#mut_res_number an integer here
+sp_ft_residues = get_ft_residues(sprot_str, int(mut_res_number))
 #this is a list of lists - one list per feature
 
 
 
 #get pdb code and residue number for the protein and residue of interest
 #list of PDB codes, chains and residue numbers 
-pdb_infos_res = sws_pdb(uniprot_ac, res_of_interest)
+pdb_infos_res = sws_pdb(uniprot_ac, mut_res_number)
 
 #remove repeats 
 temp_list = []
@@ -101,12 +104,13 @@ for feature in sp_ft_residues:
 #get the distance for each feature with the relevant information
 feature_infos_pdb = feature_distance (pdb_infos_res, pdb_infos_fts)
 
-#list with all the feature names and  distances from the residue of interest
-final_infos = []
+#dictionary with all the feature names as keys and corresponding 
+#distances from the residue of interest 
+final_infos = {}
 
 for feature in feature_infos_pdb:
    #information on where the shortest distance is between residue and feature
-   min_dist = feature [0]
+   min_dist = round(float(feature [0]), 3)
    relevant_pdb = feature [1]
    relevant_chain = feature [2]
    relevant_ft_residue = feature [3]
@@ -118,13 +122,13 @@ for feature in feature_infos_pdb:
    feature_id = residue_to_feature (sprot_residue, sprot_ac)
 
    #add to the list of the info including the feature name
-   final_infos.append([feature_id, min_dist, sprot_residue])
+   final_infos[feature_id] = min_dist
 
-print('The final distances:')
-print (final_infos)
+#convert into json format
+output = json.dumps(final_infos)
 
-
-print ('finished')
+print(output)
+#print ('finished')
 
 
 
