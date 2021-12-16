@@ -44,7 +44,7 @@ from sprotfeatures_functions import (read_file, read_url_sprot,
 print('running the program...')
 
 uniprot_ac = sys.argv[1]
-res_of_interest = int(sys.argv[2])
+res_of_interest = (sys.argv[2])
 
 
 #get SwissProt file based on uniprot_ac
@@ -52,18 +52,20 @@ sprot_file_byt = read_url_sprot(uniprot_ac)
 #this is now a byte object - convert into string
 encoding = 'utf-8'
 sprot_str = sprot_file_byt.decode(encoding)
+#this works
 
 #run check_feature first?
 
 #get list of residues in features
 #res_of_interest an integer here
-sp_ft_residues = get_ft_residues(sprot_str, res_of_interest)
+sp_ft_residues = get_ft_residues(sprot_str, int(res_of_interest))
+#this is a list of lists - one list per feature
 
 
 #get pdb code and residue number for the protein and residue of interest
 #list of PDB codes, chains and residue numbers 
 pdb_infos_res = sws_pdb(uniprot_ac, res_of_interest)
-#works for P03952(uniprot - works for both) but not for Q6GZV6(swissprot-only for sprot)
+#works for P03952(uniprot - works for both) but not for Q6GZV6
 
 #remove repeats 
 temp_list = []
@@ -75,24 +77,25 @@ pdb_infos_res = temp_list
 
 #get pdb residue numbers for the feature residues
 pdb_infos_fts = []
-for residue in sp_ft_residues:
-   #list of PDB infos for one residue
-   pdb_infos_ft = sws_pdb (uniprot_ac, residue)
-   #combine lists for a PDB info for all feature residues list
-   pdb_infos_fts.append(pdb_infos_ft)
-   #will have empty lists if the SwissProt residue doesn't have a PDB residue equivalent
+for feature in sp_ft_residues:
+   #for each list of a few residues in the feature
+   per_feature = []
+   
+   for residue in feature: 
+      #for each of the residues in that feature
+      per_residue = []
+      #list of PDB infos for one residue
+      per_residue = sws_pdb (uniprot_ac, residue)
+      #from the function, a list of lists is added that corresponds to that residue number
 
-#remove repeats
-temp_list = []
-for i in pdb_infos_fts:
+      if per_residue != []:
+         #combine lists for a PDB info for all residue in one feature
+         per_feature.append(per_residue)
 
-   if i not in temp_list:
-      temp_list.append(i)
-   #remove empty lists (when SwissProt residues are not in the PDB file)
-   if i == [['', '', '']]:
-      temp_list.remove(i)
+   #combine all non-empty into a list for all the features
+   if per_feature != []:
+      pdb_infos_fts.append(per_feature)
 
-pdb_infos_fts = temp_list
 
 
 #get the distance for each feature with the relevant information
@@ -117,6 +120,7 @@ for feature in feature_infos_pdb:
    #add to the list of the info including the feature name
    final_infos.append([feature_id, min_dist, sprot_residue])
 
+print('The final distances:')
 print (final_infos)
 
 

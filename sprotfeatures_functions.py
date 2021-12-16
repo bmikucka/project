@@ -61,8 +61,8 @@ def get_ft_residues (sprot_str, res_of_interest):
 
    Input:   sprot_file      --- Swiss Prot File   
             res_of_interest --- Number of residue being checked
-   Output:  sp_ft_residues  --- List of SwissProt resdiue numbers in 
-                                relevant features
+   Output:  sp_ft_residues  --- List of lists (one per feature) of the 
+                                SwissProt residue numbers in that feature
            
 
    09.12.21    Original    By: BAM
@@ -115,18 +115,19 @@ def get_ft_residues (sprot_str, res_of_interest):
                   res_range = res_range_str.split() 
                   start = int(res_range[0])
                   stop = int(res_range[1])
+                  residues = [start, stop]
                   #only the specific residues are involved
-                  sp_ft_residues.append(start)
-                  sp_ft_residues.append(stop)
+                  sp_ft_residues.append(residues)
 
                   
                elif len(info_list) == 4:
                   #for features with residue numbers separated by spaces
                   start = int(info_list[2])
                   stop = int(info_list[3])
-                  #add the two residues to the sp_ft_residues list
-                  sp_ft_residues.append(start)
-                  sp_ft_residues.append(stop)
+                  #add the two residues to the sp_ft_residues list in their own list
+                  residues = [start, stop]
+                  #only the specific residues are involved
+                  sp_ft_residues.append(residues)
 
 
             else:
@@ -136,17 +137,16 @@ def get_ft_residues (sprot_str, res_of_interest):
                   res_range = res_range_str.split() 
                   start = int(res_range[0])
                   stop = int(res_range[1])
-                  #get numbers of all the residues
+                  #get numbers of all the residues into a list
                   residues = range(start, stop)
                   #add everything from start to stop to the sp_ft_residues list
-                  sp_ft_residues.extend(residues)
+                  sp_ft_residues.append(residues)
                   
                else:
 
                   #for features at one residue
                   if len(info_list) == 3:
                      start = int(info_list[2])
-                     stop = int(info_list[2])
                      #add the residue to the sp_ft_residues list
                      sp_ft_residues.append(start)
 
@@ -157,9 +157,8 @@ def get_ft_residues (sprot_str, res_of_interest):
                      #get numbers of all the residues
                      residues = range(start, stop)
                      #add everything from start to stop to the sp_ft_residues list
-                     sp_ft_residues.extend(residues)
-
-            
+                     sp_ft_residues.append(residues)
+    
    return sp_ft_residues 
 
 
@@ -350,8 +349,9 @@ def sws_pdb (uniprot_ac, uniprot_resid):
       #get the 3 strings into a list, these represent info on one PDB chain
       infos = [pdb_code, chain, resid]
 
-      #add the list to the list of infos
-      pdb_infos.append(infos)
+      #add the list to the list of infos but only if not empty
+      if infos != ['', '', '']:
+         pdb_infos.append(infos)
 
    return pdb_infos
 
@@ -365,9 +365,9 @@ def feature_distance (pdb_infos_res, pdb_infos_fts):
    Input:   pdb_infos_res     --- list of lists with 3 items (PDB code, chain
                                   identifier, and residue number) for the residue 
                                   of interest
-            pdb_infos_fts     --- list of lists for each feature with lists with 
+            pdb_infos_fts     --- list of lists for each reasidue with lists with 
                                   3 items (PDB code, chain identifier, and residue 
-                                  number) for the features
+                                  number) for the resdiues in a feature
    Output:  feature_info_pdb  --- List with an item for each feature from the 
                                   pdb_infos_fts list. Each item is a list 
                                   with the smallest distance between the feature
@@ -383,48 +383,49 @@ def feature_distance (pdb_infos_res, pdb_infos_fts):
    feature_infos_pdb = []
 
    #unpack the list of features
-   for feature in pdb_infos_fts:
-      min_dist = 1000 #reset the smallest distance after each feature
-      #for every feature in the protein
-      for x in feature:
-         #for every residue in the feature
-         pdb_code = x[0]
-         chain_id = x[1]
-         residue_num = x[2]
-         #get the corresponding pdb file
-         model = atomium.fetch(pdb_code).model
-         chain = model.chain(chain_id)
-         residue = chain.residue(f"{chain_id}.{residue_num}")
+   for feature_info in pdb_infos_fts:
+      for residue_info in feature_info:
+         min_dist = 1000 #reset the smallest distance after each feature
+         #for every feature in the protein
+         for x in residue_info:
+            #for every residue in the feature
+            pdb_code = x[0]
+            chain_id = x[1]
+            residue_num = x[2]
+            #get the corresponding pdb file
+            model = atomium.fetch(pdb_code).model
+            chain = model.chain(chain_id)
+            residue = chain.residue(f"{chain_id}.{residue_num}")
 
-         #all the atoms in that residue of the feature to be compared
-         ft_atoms = []
-         for atom in residue.atoms():
-            ft_atoms.append(atom.id)
+            #all the atoms in that residue of the feature to be compared
+            ft_atoms = []
+            for atom in residue.atoms():
+               ft_atoms.append(atom.id)
 
-         #now have list of atoms in that residue
-         #get all the atoms in the residue of interest in this pdb/chain id
+            #now have list of atoms in that residue
+            #get all the atoms in the residue of interest in this pdb/chain id
 
-         for i in pdb_infos_res:
-            #only get distances for the residues numbers from the same pdb file
-            if i[0] == pdb_code and i[1] == chain_id:
-               the_residue = i[2]
+            for i in pdb_infos_res:
+               #only get distances for the residues numbers from the same pdb file
+               if i[0] == pdb_code and i[1] == chain_id:
+                  the_residue = i[2]
 
-               #get a list of atoms in that residue
-               res_atoms = []
-               residue = chain.residue(f"{chain_id}.{the_residue}")
-               for atom in residue.atoms():
-                  res_atoms.append(atom.id)
+                  #get a list of atoms in that residue
+                  res_atoms = []
+                  residue = chain.residue(f"{chain_id}.{the_residue}")
+                  for atom in residue.atoms():
+                     res_atoms.append(atom.id)
 
-               #get the distance between each atom combination
-               for a in ft_atoms:
-                  for b in res_atoms:
-                     d = model.atom(int(a)).distance_to(model.atom(int(b)))
-                     #record the smallest distance
-                     if d < min_dist:
-                        min_dist = d
-                        relevant_pdb = pdb_code
-                        relevant_chain = chain_id
-                        relevant_ft_residue = residue_num
+                  #get the distance between each atom combination
+                  for a in ft_atoms:
+                     for b in res_atoms:
+                        d = model.atom(int(a)).distance_to(model.atom(int(b)))
+                        #record the smallest distance
+                        if d < min_dist:
+                           min_dist = d
+                           relevant_pdb = pdb_code
+                           relevant_chain = chain_id
+                           relevant_ft_residue = residue_num
 
 
       #record the smallest distance and the related info for that feature into the list 
