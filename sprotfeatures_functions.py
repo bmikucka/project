@@ -77,21 +77,8 @@ def get_ft_residues (sprot_str, res_of_interest):
    sp_ft_residues = []
 
    #dictionary of relevant features
-   spfeatures = {
-      "NULL":      (0),
-      'ACT_SITE':  (2**0),
-      'BINDING':   (2**1),
-      'CA_BIND':   (2**2),
-      'DNA_BIND':  (2**3),
-      'NP_BIND':   (2**4),
-      'METAL':     (2**5),
-      'MOD_RES':   (2**6),
-      'CARBOHYD':  (2**7),
-      'MOTIF':     (2**8),
-      'LIPID':     (2**9),
-      'DISULFID':  (2**10),
-      'CROSSLNK':  (2**11)
-   }
+   spfeatures = ['ACT_SITE', 'BINDING', 'CA_BIND', 'DNA_BIND', 'NP_BIND', 'METAL', 'MOD_RES', 'CARBOHYD', 'MOTIF', 'LIPID']
+   
 
 
    #split sprot_file into lines
@@ -108,56 +95,24 @@ def get_ft_residues (sprot_str, res_of_interest):
          info_list = line.split()
 
          if info_list[1] in spfeatures:
-            if info_list[1] == 'DISULFID' or 'CROSSLNK':
-               if '..' in info_list[2]:
-                  #for features with range of residues
-                  res_range_str = info_list[2].replace('..', ' ')
-                  res_range = res_range_str.split() 
-                  start = int(res_range[0])
-                  stop = int(res_range[1])
-                  residues = [start, stop]
-                  #only the specific residues are involved
-                  sp_ft_residues.append(residues)
-
-                  
-               elif len(info_list) == 4:
-                  #for features with residue numbers separated by spaces
-                  start = int(info_list[2])
-                  stop = int(info_list[3])
-                  #add the two residues to the sp_ft_residues list in their own list
-                  residues = [start, stop]
-                  #only the specific residues are involved
-                  sp_ft_residues.append(residues)
-
+            if '..' in info_list [2]:
+               #for features with a range of residues
+               res_range_str = info_list[2].replace('..', ' ')
+               two_residues = res_range_str.split() 
+               start = int(two_residues[0])
+               stop = int(two_residues[1])
+               #get numbers of all the residues into a list
+               residues = range(start, stop)
+               #add everything from start to stop to the sp_ft_residues list
+               sp_ft_residues.append(residues)
 
             else:
-               #for features with range of residues
-               if '..' in info_list[2]:
-                  res_range_str = info_list[2].replace('..', ' ')
-                  res_range = res_range_str.split() 
-                  start = int(res_range[0])
-                  stop = int(res_range[1])
-                  #get numbers of all the residues into a list
-                  residues = range(start, stop)
-                  #add everything from start to stop to the sp_ft_residues list
-                  sp_ft_residues.append(residues)
-                  
-               else:
-
-                  #for features at one residue
-                  if len(info_list) == 3:
-                     start = int(info_list[2])
-                     #add the residue to the sp_ft_residues list
-                     sp_ft_residues.append(start)
-
-                  #for features with residue numbers separated by spaces
-                  elif len(info_list) == 4:
-                     start = int(info_list[2])
-                     stop = int(info_list[3])
-                     #get numbers of all the residues
-                     residues = range(start, stop)
-                     #add everything from start to stop to the sp_ft_residues list
-                     sp_ft_residues.append(residues)
+               #for one residue long features
+               start = int(info_list[2])
+               #make into a list
+               residues = [start]
+               #add the residue to the list
+               sp_ft_residues.append(residues)
     
    return sp_ft_residues 
 

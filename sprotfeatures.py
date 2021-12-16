@@ -62,10 +62,10 @@ sp_ft_residues = get_ft_residues(sprot_str, int(res_of_interest))
 #this is a list of lists - one list per feature
 
 
+
 #get pdb code and residue number for the protein and residue of interest
 #list of PDB codes, chains and residue numbers 
 pdb_infos_res = sws_pdb(uniprot_ac, res_of_interest)
-#works for P03952(uniprot - works for both) but not for Q6GZV6
 
 #remove repeats 
 temp_list = []
