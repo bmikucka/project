@@ -77,7 +77,16 @@ def get_ft_residues (sprot_str, res_of_interest):
    sp_ft_residues = []
 
    #dictionary of relevant features
-   spfeatures = ['ACT_SITE', 'BINDING', 'CA_BIND', 'DNA_BIND', 'NP_BIND', 'METAL', 'MOD_RES', 'CARBOHYD', 'MOTIF', 'LIPID']
+   spfeatures = ['ACT_SITE', 
+      'BINDING', 
+      'CA_BIND', 
+      'DNA_BIND', 
+      'NP_BIND', 
+      'METAL', 
+      'MOD_RES', 
+      'CARBOHYD', 
+      'MOTIF', 
+      'LIPID']
    
 
 
@@ -256,7 +265,8 @@ def sws_pdb (uniprot_ac, uniprot_resid):
    the given UniProt accession number.
 
    Input:   uniprot_ac      --- UniProt accession number  
-            uniprot_resid   --- Number for residue of interest in UniProt file (integer)
+            uniprot_resid   --- Number for residue of interest in UniProt 
+                                file (integer)
    Output:  pdb_infos       --- list of PDB code, chain and resid relevant   
                                 to the UniProt accession number 
    
@@ -317,17 +327,19 @@ def feature_distance (pdb_infos_res, pdb_infos_fts):
    and features, gets shortest distance between a residue of interest atom
    and one of the feature atoms.
 
-   Input:   pdb_infos_res     --- list of lists with 3 items (PDB code, chain
-                                  identifier, and residue number) for the residue 
-                                  of interest
-            pdb_infos_fts     --- list of lists for each reasidue with lists with 
-                                  3 items (PDB code, chain identifier, and residue 
-                                  number) for the resdiues in a feature
-   Output:  feature_info_pdb  --- List with an item for each feature from the 
-                                  pdb_infos_fts list. Each item is a list 
-                                  with the smallest distance between the feature
-                                  and the residue of interest, the pdb and chain 
-                                  identifiers, and the residue number
+   Input:   pdb_infos_res     --- list of lists with 3 items (PDB code, 
+                                  chain identifier, and residue number) 
+                                  for the residue of interest
+            pdb_infos_fts     --- list of lists for each reasidue with 
+                                  lists with 3 items (PDB code, chain 
+                                  identifier, and residue number) for the 
+                                  resdiues in a feature
+   Output:  feature_info_pdb  --- List with an item for each feature from 
+                                  the pdb_infos_fts list. Each item is a 
+                                  list with the smallest distance between 
+                                  the feature and the residue of interest, 
+                                  the pdb and chain identifiers, and the 
+                                  residue number
 
    
    10.12.21    Original    By: BAM
@@ -399,7 +411,7 @@ def read_url_pdbsws (pdb, chain, pdb_residue):
    Input:   pdb            --- 4 letter PDB code
             chain          --- Chain ID
             pdb_residue    --- PDB Residue number
-    Output:  file            --- Text file from url as a byt
+    Output:  file          --- Text file from url as a byt
 
    11.12.21    Original    By: BAM
 
@@ -478,7 +490,6 @@ def residue_to_feature (res_id, sprot_ac):
 
 
 
-
   #get the SwissProt file
   file = read_url_sprot (sprot_ac)
 
@@ -552,5 +563,3 @@ def residue_to_feature (res_id, sprot_ac):
 
          
 #*************************************************************************
-
-
