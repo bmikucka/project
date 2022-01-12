@@ -37,7 +37,7 @@ import re
 from urllib.request import urlopen
 import atomium
 import json
-from sprotfeatures_functions import (read_file, get_pdb_code, read_url_sprot, 
+from sprotfeatures_functions import (read_file, process_resnum, get_pdb_code, read_url_sprot, 
    get_ft_residues, check_feature, read_url_swspdb, sws_pdb, feature_distance, 
    read_url_pdbsws, pdb_sws, residue_to_feature)
 
@@ -45,7 +45,7 @@ from sprotfeatures_functions import (read_file, get_pdb_code, read_url_sprot,
 
 #take uniprot accession number and residue number from command line
 
-resnum = [1]
+res_id = [1]
 newaa = [2]
 pdbfile = [3]
 
@@ -56,28 +56,32 @@ pdbfile = [3]
 #uniprot_ac, mut_res_number, mutant_residue_id
 
 @functools.lru_cache (maxsize = None)
-def get_results (resnum, newaa, pdbfile):
+def get_results (res_id, newaa, pdbfile):
 
    #get PDB code
    pdb_code = get_pdb_code (pdbfile)
 
+   #get the residue number, chain and insert from resnum
+   (chain_id, resnum_pdb, insert) = process_resnum (res_id)
+
    #get SwissProt accession number 
+   (sprot_ac, resnum_sprot) = pdb_sws (pdb_code, chain_id, resnum_pdb)
 
    #get SwissProt file based on uniprot_ac
-   sprot_file_byt = read_url_sprot(uniprot_ac)
+   sprot_file_byt = read_url_sprot(sprot_ac)
    #this is now a byte object - convert into string
    encoding = 'utf-8'
    sprot_str = sprot_file_byt.decode(encoding)
 
    #get list of residues in features
    #mut_res_number an integer here
-   sp_ft_residues = get_ft_residues(sprot_str, int(mut_res_number))
+   sp_ft_residues = get_ft_residues(sprot_str, int(resnum_sprot))
    #this is a list of lists - one list per feature
 
 
    #get pdb code and residue number for the protein and residue of interest
    #list of PDB codes, chains and residue numbers 
-   pdb_infos_res = sws_pdb(uniprot_ac, mut_res_number)
+   pdb_infos_res = sws_pdb(sprot_ac, resnum_sprot)
 
    #remove repeats 
    temp_list = []

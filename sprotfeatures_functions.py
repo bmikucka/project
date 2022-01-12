@@ -47,6 +47,33 @@ def read_file (filename):
       return file_lines
 
 #*************************************************************************
+def process_resnum (res_id):
+   """Separate chain id, residue number and insert from the resnum input
+
+   Input:  res_id     --- input from command line: [chain]resnum[insert]
+   Return: chain_id   --- Optional, chain id of the PDB file 
+           resnum_pdb --- PDB number of the mutant residue 
+           insert     --- insert code
+
+   """
+
+   #if the first character is a letter - make that the chain_in
+   if res_id.startswith("[A-Z]"):
+      chain_id = res_id[0]
+      res_id = res_id [1:]
+   else: chain_id = ''
+
+   if res_id.endswith("[A-Z"):
+      insert = res_id [-1]
+      res_id = res_id [:-1]
+   else: insert = ''
+
+   resnum_pdb = res_id
+
+   return (chain_id, resnum_pdb, insert)
+
+
+#*************************************************************************
 def get_pdb_code (pdbfile):
    """Get UniProt accession number and residue number from PDB file
 
@@ -54,7 +81,7 @@ def get_pdb_code (pdbfile):
    Return: pdb_code   --- PDB code 
 
    """
-
+   
    #get PDB file lines
    lines = read_file (pdbfile)
 
