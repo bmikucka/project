@@ -47,6 +47,31 @@ def read_file (filename):
       return file_lines
 
 #*************************************************************************
+def get_pdb_code (pdbfile):
+   """Get UniProt accession number and residue number from PDB file
+
+   Input:  pdbfile    --- PDB file
+   Return: pdb_code   --- PDB code 
+
+   """
+
+   #get PDB file lines
+   lines = read_file (pdbfile)
+
+   #get the file that starts with _entry.id
+   for line in lines:
+      if line.startswith('_entry.id'):
+         code_line = line
+
+   #replace white spaces and split by spaces
+   code_line = ' '.join(code_line.split())
+   code_line = code_line.split()
+
+   #get the code
+   pdb_code = code_line [1]
+
+
+#*************************************************************************
 def read_url_sprot (sprot_id):
 
    url = 'https://www.uniprot.org/uniprot/{}.txt'.format(sprot_id)

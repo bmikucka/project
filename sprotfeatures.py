@@ -37,7 +37,7 @@ import re
 from urllib.request import urlopen
 import atomium
 import json
-from sprotfeatures_functions import (read_file, read_url_sprot, 
+from sprotfeatures_functions import (read_file, get_pdb_code, read_url_sprot, 
    get_ft_residues, check_feature, read_url_swspdb, sws_pdb, feature_distance, 
    read_url_pdbsws, pdb_sws, residue_to_feature)
 
@@ -45,16 +45,23 @@ from sprotfeatures_functions import (read_file, read_url_sprot,
 
 #take uniprot accession number and residue number from command line
 
-#resnum = [1]
-#newaa = [2]
-#pdbfile = [3]
+resnum = [1]
+newaa = [2]
+pdbfile = [3]
 
-uniprot_ac = sys.argv[1]
-mut_res_number = sys.argv[2]
-mutant_residue_id = sys.argv[3]
+#uniprot_ac = sys.argv[1]
+#mut_res_number = sys.argv[2]
+#mutant_residue_id = sys.argv[3]
+
+#uniprot_ac, mut_res_number, mutant_residue_id
 
 @functools.lru_cache (maxsize = None)
-def get_results (uniprot_ac, mut_res_number, mutant_residue_id):
+def get_results (resnum, newaa, pdbfile):
+
+   #get PDB code
+   pdb_code = get_pdb_code (pdbfile)
+
+   #get SwissProt accession number 
 
    #get SwissProt file based on uniprot_ac
    sprot_file_byt = read_url_sprot(uniprot_ac)
