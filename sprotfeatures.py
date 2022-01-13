@@ -45,9 +45,9 @@ from sprotfeatures_functions import (read_file, process_resnum, get_pdb_code, re
 
 #take uniprot accession number and residue number from command line
 
-res_id = [1]
-newaa = [2]
-pdbfile = [3]
+res_id = sys.argv[1]
+newaa = sys.argv[2]
+pdbfile = sys.argv[3]
 
 #uniprot_ac = sys.argv[1]
 #mut_res_number = sys.argv[2]
@@ -151,7 +151,3 @@ output = get_results (uniprot_ac, mut_res_number, mutant_residue_id)
 #print(timeit.timeit ('get_results (uniprot_ac, mut_res_number, mutant_residue_id)', globals=globals(), number=1))
 
 print(output)
-
-
-
-
