@@ -646,3 +646,24 @@ def residue_to_feature (res_id, sprot_ac):
 
          
 #*************************************************************************
+def get_bool_results (distances_list):
+   """ Get result BAD or OK.
+
+   Input:   final_infos  --- dictionary 
+   Output:  result       --- BAD - likely to have an effect or OK - 
+                             unlikely to have an effect
+
+   14.01.22    Original    By: BAM
+
+   """
+
+   for d in distances_list:
+      if d < 4:
+         result = "BAD"
+         return result
+      else: result = "OK"
+   
+   return result
+
+
+#*************************************************************************

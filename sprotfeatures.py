@@ -40,7 +40,7 @@ import json
 from sprotfeatures_functions import (read_file, process_resnum, 
    get_pdb_code, read_url_sprot, get_sprot_str, get_ft_residues, 
    pdb_ft_list, check_feature, read_url_swspdb, sws_pdb, feature_distance, 
-   read_url_pdbsws, pdb_sws, residue_to_feature)
+   read_url_pdbsws, pdb_sws, residue_to_feature, get_bool_results)
 
 #*************************************************************************
 
@@ -103,17 +103,21 @@ def get_results (res_id, newaa, pdbfile):
       else:
          final_infos[feature_id] = min_dist
 
+   distances_list = final_infos.values()
+   bool_result = get_bool_results(distances_list)
+
+   output = {
+      "SprotFTdist-BOOL": bool_result,
+      "SprotFTdist-DISTANCES": final_infos
+      }
+
+
    #convert into json format
-   #output = json.dumps(final_infos)
-   #return output
+   output = json.dumps(output)
 
-   return final_infos
-
-
+   return output
 
 output = get_results (res_id, newaa, pdbfile)
 #print(timeit.timeit ('get_results (res_id, newaa, pdbfile)', globals=globals(), number=1))
-
-
 
 print(output)
