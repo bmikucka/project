@@ -17,8 +17,13 @@ Description:
 
 
 --------------------------------------------------------------------------
-Usage:
-sprotfeatures.py [chain]resnum[insert] newaa pdbfile
+Usage: sprotfeatures.py [-vv] [-nocache] [-force] [chain]resnum[insert] 
+       newaa pdbfile
+
+       (newaa maybe 3-letter or 1-letter code)
+       -vv      Verbose
+       -force   Force calculation even if results are cached
+       -nocache Do not cache results
 
 
 --------------------------------------------------------------------------
@@ -54,14 +59,14 @@ res_id = sys.argv[1]
 newaa = sys.argv[2]
 pdbfile = sys.argv[3]
 
+if '-info' in opts:
+   print ("Calculating distance the mutant residue to feature residues")
+
 cached_file = check_cache (res_id, newaa, pdbfile, opts)
 if cached_file != '':
    #print the content of the file
    print (cached_file)
 elif cached_file == '':
-
-#@functools.lru_cache (maxsize = None)
-#def get_results (res_id, newaa, pdbfile):
 
    #get PDB code
    pdb_code = get_pdb_code (pdbfile)
@@ -117,17 +122,11 @@ elif cached_file == '':
       "SprotFTdist-DISTANCES": final_infos
       }
 
-
    #convert into json format
    output = json.dumps(output)
 
    #cache results
    if '-nocache' not in opts:
       write_cache (res_id, newaa, pdbfile, output)
-
-   #return output
-
-   #output = get_results (res_id, newaa, pdbfile)
-   #print(timeit.timeit ('get_results (res_id, newaa, pdbfile)', globals=globals(), number=1))
 
    print(output)

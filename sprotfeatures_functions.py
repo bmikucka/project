@@ -722,11 +722,6 @@ def write_cache (res_id, newaa, pdbfile, output_str):
    file_name = file_name.replace("/", "_")
    path = './cachedir/SprotFTdist'
 
-   #full_name = os.path.join(path, file_name)
-   #cache_file = open(full_name, "x")
-   #cache_file.write(output)
-   #cache_file.close()
-
    #convert output string into byte
    output_encoded = bytes(output_str,'UTF-8')
 
