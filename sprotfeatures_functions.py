@@ -29,6 +29,7 @@ V1.0  09.12.21    Original    By: BAM
 import sys
 import re
 import os
+import json
 from urllib.request import urlopen
 import atomium
 
@@ -675,8 +676,8 @@ def check_cache (res_id, newaa, pdbfile, opts):
             newaa         --- input new mutant residue
             pdbfile       --- input PDB file
             opts          --- list of optional command line arguments
-   Output:  cached_file   --- result of the program, if cached before,
-                              empty string if not cached
+   Output:  cached_file   --- result of the program in json format, if 
+                              cached before, empty string if not cached
 
    18.01.22    Original    By: BAM
 
@@ -691,7 +692,7 @@ def check_cache (res_id, newaa, pdbfile, opts):
    full_name = os.path.join(path, file_name)
    
    #if -f in opts return empty string (force to run)
-   if '-f' in opts:
+   if '-f' in opts or '-force' in opts:
       return ('')
 
    #check if filename in directory
@@ -699,8 +700,10 @@ def check_cache (res_id, newaa, pdbfile, opts):
    #this doesnt work
    if os.path.isfile(full_name):
       #if in the directory then return the content
-      cache_file = read_file(full_name)
-      return cache_file
+      with open (full_name, 'r') as file:
+         cache_file_str = file.read()
+         cache_file_json = json.dumps(cache_file_str)
+         return cache_file_json
 
    #if not in the directory then restun empty string
    else: 
