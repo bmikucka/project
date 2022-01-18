@@ -28,6 +28,7 @@ V1.0  09.12.21    Original    By: BAM
 
 import sys
 import re
+import os
 from urllib.request import urlopen
 import atomium
 
@@ -664,6 +665,75 @@ def get_bool_results (distances_list):
       else: result = "OK"
    
    return result
+
+
+#*************************************************************************
+def check_cache (res_id, newaa, pdbfile, opts):
+   """ Check if results have been cached.
+
+   Input:   res_id        --- input residue 
+            newaa         --- input new mutant residue
+            pdbfile       --- input PDB file
+            opts          --- list of optional command line arguments
+   Output:  cached_file   --- result of the program, if cached before,
+                              empty string if not cached
+
+   18.01.22    Original    By: BAM
+
+   """
+
+
+   #make file name using the input
+   file_name = ("{}_{}_{}.txt").format(pdbfile, res_id, newaa)
+   file_name = file_name.replace("/", "_")
+   path = './cachedir/SprotFTdist'
+
+   full_name = os.path.join(path, file_name)
+   
+   #if -f in opts return empty string (force to run)
+   if '-f' in opts:
+      return ('')
+
+   #check if filename in directory
+
+   #this doesnt work
+   if os.path.isfile(full_name):
+      #if in the directory then return the content
+      cache_file = read_file(full_name)
+      return cache_file
+
+   #if not in the directory then restun empty string
+   else: 
+      return ('')
+
+#*************************************************************************
+def write_cache (res_id, newaa, pdbfile, output_str):
+   """ Write cache file for this input.
+
+   Input:   res_id   --- input residue 
+            newaa    --- input new mutant residue
+            pdbfile  --- input PDB file
+            output   --- content of the new file
+
+   18.01.22    Original    By: BAM
+
+   """
+   file_name = ("{}_{}_{}.txt").format(pdbfile, res_id, newaa)
+   file_name = file_name.replace("/", "_")
+   path = './cachedir/SprotFTdist'
+
+   #full_name = os.path.join(path, file_name)
+   #cache_file = open(full_name, "x")
+   #cache_file.write(output)
+   #cache_file.close()
+
+   #convert output string into byte
+   output_encoded = bytes(output_str,'UTF-8')
+
+   with open(os.path.join(path, file_name), 'wb') as cache_file:
+    cache_file.write(output_encoded)
+
+   return
 
 
 #*************************************************************************

@@ -37,10 +37,11 @@ import re
 from urllib.request import urlopen
 import atomium
 import json
-from sprotfeatures_functions import (read_file, process_resnum, 
+from sprotfeatures_functions import (os, read_file, process_resnum, 
    get_pdb_code, read_url_sprot, get_sprot_str, get_ft_residues, 
    pdb_ft_list, check_feature, read_url_swspdb, sws_pdb, feature_distance, 
-   read_url_pdbsws, pdb_sws, residue_to_feature, get_bool_results)
+   read_url_pdbsws, pdb_sws, residue_to_feature, get_bool_results,
+   check_cache, write_cache)
 
 #*************************************************************************
 
@@ -53,9 +54,14 @@ res_id = sys.argv[1]
 newaa = sys.argv[2]
 pdbfile = sys.argv[3]
 
+cached_file = check_cache (res_id, newaa, pdbfile, opts)
+if cached_file != '':
+   #print the content of the file
+   print (cached_file)
+elif cached_file == '':
 
-@functools.lru_cache (maxsize = None)
-def get_results (res_id, newaa, pdbfile):
+#@functools.lru_cache (maxsize = None)
+#def get_results (res_id, newaa, pdbfile):
 
    #get PDB code
    pdb_code = get_pdb_code (pdbfile)
@@ -115,9 +121,13 @@ def get_results (res_id, newaa, pdbfile):
    #convert into json format
    output = json.dumps(output)
 
-   return output
+   #cache results
+   if '-nocache' not in opts:
+      write_cache (res_id, newaa, pdbfile, output)
 
-output = get_results (res_id, newaa, pdbfile)
-#print(timeit.timeit ('get_results (res_id, newaa, pdbfile)', globals=globals(), number=1))
+   #return output
 
-print(output)
+   #output = get_results (res_id, newaa, pdbfile)
+   #print(timeit.timeit ('get_results (res_id, newaa, pdbfile)', globals=globals(), number=1))
+
+   print(output)
