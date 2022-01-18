@@ -64,7 +64,7 @@ if '-info' in opts:
 
 cached_file = check_cache (res_id, newaa, pdbfile, opts)
 if cached_file != '':
-   #print the content of the file
+   #print the results in json format
    print (cached_file)
 elif cached_file == '':
 

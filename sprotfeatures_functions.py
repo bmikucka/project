@@ -701,9 +701,8 @@ def check_cache (res_id, newaa, pdbfile, opts):
    if os.path.isfile(full_name):
       #if in the directory then return the content
       with open (full_name, 'r') as file:
-         cache_file_str = file.read()
-         cache_file_json = json.dumps(cache_file_str)
-         return cache_file_json
+         cache_file = file.read()
+         return cache_file
 
    #if not in the directory then restun empty string
    else: 
