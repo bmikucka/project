@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 """
-Program: sprotfeatures
-File:    sprotfeatures.py
+Program: sprotFTdist
+File:    sprotFTdist.py
 
 Version:    V1.0
 Date:       09.12.2021
@@ -13,17 +13,14 @@ Function:   Calculates the distance of mutant residue to the closest
 Author: Barbara A. Mikucka
 
 --------------------------------------------------------------------------
-Description:
-
-
---------------------------------------------------------------------------
-Usage: sprotfeatures.py [-vv] [-nocache] [-force] [chain]resnum[insert] 
-       newaa pdbfile
+Usage: sprotfeatures.py [chain]resnum[insert] newaa pdbfile [-vv] 
+         [-nocache] [-force] [-info]
 
        (newaa maybe 3-letter or 1-letter code)
        -vv      Verbose
        -force   Force calculation even if results are cached
        -nocache Do not cache results
+       -info    Prints a 1-line summary of what the plugin is doing
 
 
 --------------------------------------------------------------------------
@@ -61,6 +58,26 @@ pdbfile = sys.argv[3]
 
 if '-info' in opts:
    print ("Calculating distance the mutant residue to feature residues")
+   sys.exit()
+
+if '-h' in opts:
+   print ('''
+   sprotFTdist.py, V1.0, 25.01.2022, Barbara A. Mikucka
+   Function:   SAAPdap plugin: Calculates the distance of mutant residue to 
+               the closest SwissProt feature. 
+
+   --------------------------------------------------------------------------
+   Usage: sprotfeatures.py [chain]resnum[insert] newaa pdbfile [-vv] 
+   [-nocache] [-force] [-info]
+
+      (newaa maybe 3-letter or 1-letter code)
+      -vv      Verbose
+      -force   Force calculation even if results are cached
+      -nocache Do not cache results
+      -info    Prints a 1-line summary of what the plugin is doing
+            ''')
+   sys.exit()
+
 
 cached_file = check_cache (res_id, newaa, pdbfile, opts)
 if cached_file != '':
@@ -93,7 +110,20 @@ elif cached_file == '':
 
    #dictionary with all the feature names as keys and corresponding 
    #distances from the residue of interest 
-   final_infos = {}
+   output = {
+      "SprotFTdist-BOOL": 'tbd',
+      'ACT_SITE':    -1,
+      'BINDING':     -1, 
+      'CA_BIND':     -1, 
+      'DNA_BIND':    -1, 
+      'NP_BIND':     -1, 
+      'METAL':       -1, 
+      'MOD_RES':     -1, 
+      'CARBOHYD':    -1, 
+      'MOTIF':       -1, 
+      'LIPID':       -1
+      }
+
 
    for feature in feature_distances:
       #information on where the shortest distance is between residue and feature
@@ -106,21 +136,34 @@ elif cached_file == '':
       #get feature name for this feature
       feature_id = residue_to_feature (closest_res_sp, sprot_ac)
 
-      #add to the list of the info including the feature name if this is 
-      #shorter than the one that's already there 
-      if feature_id in final_infos:
-         if min_dist < final_infos[feature_id]:
-            final_infos[feature_id] = min_dist
+      #change the value for the feature if there isn't one there (=-1)
+      if output[feature_id] != -1:
+         #only replace if the distance is smaller than what is entered
+         if min_dist < output[feature_id]:
+            output[feature_id] = min_dist
       else:
-         final_infos[feature_id] = min_dist
+         #for features that do not have a distance value yet
+         output[feature_id] = min_dist
 
-   distances_list = final_infos.values()
+   distances_list = list(output.values())
+   #exclude the BOOL result from distance evaluations
+   distances_list = distances_list [1:]
    bool_result = get_bool_results(distances_list)
 
-   output = {
-      "SprotFTdist-BOOL": bool_result,
-      "SprotFTdist-DISTANCES": final_infos
-      }
+   #edit the BOOL to include the result
+   output["SprotFTdist-BOOL"] = bool_result
+
+   #change key names to fit output
+   output['SprotFTdist-ACT_SITE'] = output.pop('ACT_SITE')
+   output['SprotFTdist-BINDING'] = output.pop('BINDING')
+   output['SprotFTdist-CA_BIND'] = output.pop('CA_BIND')
+   output['SprotFTdist-DNA_BIND'] = output.pop('DNA_BIND')
+   output['SprotFTdist-NP_BIND'] = output.pop('NP_BIND')
+   output['SprotFTdist-METAL'] = output.pop('METAL')
+   output['SprotFTdist-MOD_RES'] = output.pop('MOD_RES')
+   output['SprotFTdist-CARBOHYD'] = output.pop('CARBOHYD')
+   output['SprotFTdist-MOTIF'] = output.pop('MOTIF')
+   output['SprotFTdist-LIPID'] = output.pop('LIPID')
 
    #convert into json format
    output = json.dumps(output)

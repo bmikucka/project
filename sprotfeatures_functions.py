@@ -1,6 +1,6 @@
 """
-Program: sprotfeatures_functions
-File:    sprotfeatures_functions.py
+Program: sprotFTdist_lib
+File:    sprotFTdist_lib.py
 
 Version:    V1.0
 Date:       09.12.2021
@@ -166,7 +166,6 @@ def get_ft_residues (sprot_str, res_of_interest):
       'MOTIF', 
       'LIPID']
    
-
 
    #split sprot_file into lines
    sprot_lines = sprot_str.split('\n')
@@ -660,7 +659,7 @@ def get_bool_results (distances_list):
    """
 
    for d in distances_list:
-      if d < 4:
+      if d < 4 and d >= 0:
          result = "BAD"
          return result
       else: result = "OK"
