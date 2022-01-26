@@ -448,7 +448,6 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
 
    #get list of atoms in the mutant residue
    pdb =  atomium.open(pdb_file)
-   #model = atomium.fetch(pdb_code).model
    chain = pdb.model.chain(chain_id)
    residue = chain.residue(f"{chain_id}.{resnum_pdb}")
 
