@@ -475,7 +475,7 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
          #get distance between each atom combination
          for x in ft_atoms:
             for y in atoms:
-               d = model.atom(int(x)).distance_to(model.atom(int(y)))
+               d = pdb.model.atom(int(x)).distance_to(pdb.model.atom(int(y)))
                #record the smallest distance for each feature and the  
                #corresponding residue number from the feature
                if d < min_dist:
