@@ -622,7 +622,6 @@ def residue_to_feature (res_id, sprot_ac):
                number_str = info_list[2].replace('..', ' ')
                #number is a string of 2 number separated by a space
                residues = number_str.split()
-               print (residues)
                #residues is a list of the two residues in number
                #now have a list of two residue numbers
 
