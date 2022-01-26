@@ -105,7 +105,7 @@ elif cached_file == '':
    pdb_ft_residues = pdb_ft_list (sp_ft_residues, sprot_ac, pdb_code, chain_id)
 
    #get list with the distances for each feature with the relevant information
-   feature_distances = feature_distance (pdb_code, chain_id, resnum_pdb, pdb_ft_residues)
+   feature_distances = feature_distance (pdbfile, chain_id, resnum_pdb, pdb_ft_residues)
 
 
    #dictionary with all the feature names as keys and corresponding 

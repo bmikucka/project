@@ -425,11 +425,11 @@ def sws_pdb (uniprot_ac, uniprot_resid, pdb_code, chain_id):
 
 
 #*************************************************************************
-def feature_distance (pdb_code, chain_id, resnum_pdb, pdb_ft_residues):
+def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
    """ Processes lists of residue numbers, gets shortest distance 
    between a residue of interest atom and one of the feature atoms.
 
-   Input:   pdb_code          --- PDB code 
+   Input:   pdb_file          --- PDB file 
             chain_id          --- Chain ID
             resnum_pdb        --- residue of interest (mutant) number 
             pdb_ft_residues   --- list of lists (for each feature) with 
@@ -447,14 +447,14 @@ def feature_distance (pdb_code, chain_id, resnum_pdb, pdb_ft_residues):
    feature_distances= []
 
    #get list of atoms in the mutant residue
-   model = atomium.fetch(pdb_code).model
+   model =  atomium.open(pdb_file)
+   #model = atomium.fetch(pdb_code).model
    chain = model.chain(chain_id)
    residue = chain.residue(f"{chain_id}.{resnum_pdb}")
 
    atoms = []
    for atom in residue.atoms():
       atoms.append(atom.id)
-
 
 
    #unpack the list of features 
@@ -465,6 +465,7 @@ def feature_distance (pdb_code, chain_id, resnum_pdb, pdb_ft_residues):
 
       #for each of the residues in that feature
       for aa in residue_list:
+         print (aa)
          #get list of atoms in that residue
          ft_atoms = []
          residue = chain.residue(f"{chain_id}.{aa}")
