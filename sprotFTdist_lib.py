@@ -465,22 +465,23 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
 
       #for each of the residues in that feature
       for aa in residue_list:
-         print (aa)
          #get list of atoms in that residue
          ft_atoms = []
          residue = chain.residue(f"{chain_id}.{aa}")
-         for atom in residue.atoms():
-            ft_atoms.append(atom.id) 
+         #only if the residue is in the PDB file
+         if residue != None:
+            for atom in residue.atoms():
+               ft_atoms.append(atom.id) 
 
-         #get distance between each atom combination
-         for x in ft_atoms:
-            for y in atoms:
-               d = pdb.model.atom(int(x)).distance_to(pdb.model.atom(int(y)))
-               #record the smallest distance for each feature and the  
-               #corresponding residue number from the feature
-               if d < min_dist:
-                  min_dist = d
-                  closest_res = aa
+            #get distance between each atom combination
+            for x in ft_atoms:
+               for y in atoms:
+                  d = pdb.model.atom(int(x)).distance_to(pdb.model.atom(int(y)))
+                  #record the smallest distance for each feature and the  
+                  #corresponding residue number from the feature
+                  if d < min_dist:
+                     min_dist = d
+                     closest_res = aa
 
       #for each feature add a list with the recorded information
       feature_distances.append ([min_dist, closest_res]) 
