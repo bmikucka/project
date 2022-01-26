@@ -39,7 +39,7 @@ import re
 from urllib.request import urlopen
 import atomium
 import json
-from sprotfeatures_functions import (os, read_file, process_resnum, 
+from sprotFTdist_lib import (os, read_file, process_resnum, 
    get_pdb_code, read_url_sprot, get_sprot_str, get_ft_residues, 
    pdb_ft_list, check_feature, read_url_swspdb, sws_pdb, feature_distance, 
    read_url_pdbsws, pdb_sws, residue_to_feature, get_bool_results,
