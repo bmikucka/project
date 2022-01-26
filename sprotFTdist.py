@@ -169,7 +169,7 @@ elif cached_file == '':
    output = json.dumps(output)
 
    #cache results
-   if '-nocache' not in opts:
-      write_cache (res_id, newaa, pdbfile, output)
+   #if '-nocache' not in opts:
+      #write_cache (res_id, newaa, pdbfile, output)
 
    print(output)
