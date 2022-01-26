@@ -622,6 +622,7 @@ def residue_to_feature (res_id, sprot_ac):
                number_str = info_list[2].replace('..', ' ')
                #number is a string of 2 number separated by a space
                residues = number_str.split()
+               print (residues)
                #residues is a list of the two residues in number
                #now have a list of two residue numbers
 
@@ -634,8 +635,8 @@ def residue_to_feature (res_id, sprot_ac):
 
                #if a feature across the range of residues
                else:
-                  residue_numbers = range(int(residues[0]), int(resdiues[1]))
-                  if int(res_id) in residue_rumbers:
+                  residue_numbers = range(int(residues[0]), int(residues[1]))
+                  if int(res_id) in residue_numbers:
                      feature = info_list[1]
                      return(feature)
 
