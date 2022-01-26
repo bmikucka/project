@@ -52,9 +52,9 @@ from sprotFTdist_lib import (os, read_file, process_resnum,
 opts = [opt for opt in sys.argv[1:] if opt.startswith("-")]
 args = [arg for arg in sys.argv[1:] if not arg.startswith("-")]
 
-res_id = args[1]
-newaa = args[2]
-pdbfile = args[3]
+res_id = args[0]
+newaa = args[1]
+pdbfile = args[2]
 
 if '-info' in opts:
    print ("Calculating distance the mutant residue to feature residues")
