@@ -39,6 +39,7 @@ import re
 from urllib.request import urlopen
 import atomium
 import json
+import timeit
 import cProfile
 from sprotFTdist_lib_copy import (os, read_file, process_resnum, 
    get_pdb_code, read_url_sprot, get_sprot_str, get_ft_residues, 
@@ -110,7 +111,6 @@ sp_ft_residues = get_ft_residues(sprot_str, int(resnum_sprot))
 #translate SwissProt numbering to PDB numbering
 pdb_ft_residues = pdb_ft_list (sp_ft_residues, sprot_ac, pdb_code, chain_id)
 #cProfile.run('pdb_ft_list (sp_ft_residues, sprot_ac, pdb_code, chain_id)')
-print (pdb_ft_residues)
 
 #get list with the distances for each feature with the relevant information
 feature_distances = feature_distance (pdbfile, chain_id, resnum_pdb, pdb_ft_residues)

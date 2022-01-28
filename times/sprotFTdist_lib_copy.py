@@ -30,6 +30,7 @@ import sys
 import re
 import os
 import json
+import timeit
 from urllib.request import urlopen
 import atomium
 
@@ -456,15 +457,20 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
       atoms.append(atom.id)
 
 
+   #start = timeit.timeit()
+   #print("hello")
+   #end = timeit.timeit()
+   #print(end - start)
+
    #unpack the list of features 
 
    #for each of the features
    for residue_list in pdb_ft_residues:
       min_dist = 1000 #reset the smallest distance after each feature
-      print('time for one residue start')
 
       #for each of the residues in that feature
       for aa in residue_list:
+         start = timeit.timeit()
          #get list of atoms in that residue
          ft_atoms = []
          residue = chain.residue(f"{chain_id}.{aa}")
@@ -482,7 +488,10 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
                   if d < min_dist:
                      min_dist = d
                      closest_res = aa
-      print('time for one residue stop')
+         end = timeit.timeit()
+         print('Time taken for one residue')
+         print(end - start)
+
 
       #for each feature add a list with the recorded information
       feature_distances.append ([min_dist, closest_res]) 
