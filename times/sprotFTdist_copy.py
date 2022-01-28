@@ -34,7 +34,7 @@ V1.0  16.11.21    Original    By: BAM
 
 import sys
 import functools 
-import timeit
+import time
 import re
 from urllib.request import urlopen
 import atomium
