@@ -88,32 +88,33 @@ if '-h' in opts:
 
 #get PDB code
 pdb_code = get_pdb_code (pdbfile)
-print(cProfile.run('get_pdb_code (pdbfile)'))
+#cProfile.run('get_pdb_code (pdbfile)')
 
 #get the residue number, chain and insert from resnum
 (chain_id, resnum_pdb, insert) = process_resnum (res_id)
-print(cProfile.run('process_resnum (res_id)'))
+#cProfile.run('process_resnum (res_id)')
 
 #get SwissProt accession number 
 (sprot_ac, resnum_sprot) = pdb_sws (pdb_code, chain_id, resnum_pdb)
-print(cProfile.run('pdb_sws (pdb_code, chain_id, resnum_pdb)'))
+#cProfile.run('pdb_sws (pdb_code, chain_id, resnum_pdb)')
 
 #get SwissProt file based on uniprot_ac
 sprot_str = get_sprot_str (sprot_ac)
-print(cProfile.run('get_sprot_str (sprot_ac)'))
+#cProfile.run('get_sprot_str (sprot_ac)')
 
 #get list of residues in features
 sp_ft_residues = get_ft_residues(sprot_str, int(resnum_sprot))
-print(cProfile.run('get_ft_residues(sprot_str, int(resnum_sprot))'))
+#cProfile.run('get_ft_residues(sprot_str, int(resnum_sprot))')
 #this is a list of lists - one list per feature
 
 #translate SwissProt numbering to PDB numbering
 pdb_ft_residues = pdb_ft_list (sp_ft_residues, sprot_ac, pdb_code, chain_id)
-print(cProfile.run('pdb_ft_list (sp_ft_residues, sprot_ac, pdb_code, chain_id)'))
+#cProfile.run('pdb_ft_list (sp_ft_residues, sprot_ac, pdb_code, chain_id)')
+print (pdb_ft_residues)
 
 #get list with the distances for each feature with the relevant information
 feature_distances = feature_distance (pdbfile, chain_id, resnum_pdb, pdb_ft_residues)
-print(cProfile.run('feature_distance (pdbfile, chain_id, resnum_pdb, pdb_ft_residues)'))
+#cProfile.run('feature_distance (pdbfile, chain_id, resnum_pdb, pdb_ft_residues)')
 
 
 #dictionary with all the feature names as keys and corresponding 
@@ -140,12 +141,12 @@ for feature in feature_distances:
 
    #get the SwissProt information
    (sprot_ac, closest_res_sp) = pdb_sws (pdb_code, chain_id, closest_res_pdb)
-   print(cProfile.run('rpdb_sws (pdb_code, chain_id, closest_res_pdb)'))
+   cProfile.run('pdb_sws (pdb_code, chain_id, closest_res_pdb)')
 
 
    #get feature name for this feature
    feature_id = residue_to_feature (closest_res_sp, sprot_ac)
-   print(cProfile.run('residue_to_feature (closest_res_sp, sprot_ac)'))
+   cProfile.run('residue_to_feature (closest_res_sp, sprot_ac)')
 
    #change the value for the feature if there isn't one there (=-1)
    if output[feature_id] != -1:
@@ -160,7 +161,7 @@ distances_list = list(output.values())
 #exclude the BOOL result from distance evaluations
 distances_list = distances_list [1:]
 bool_result = get_bool_results(distances_list)
-print(cProfile.run('get_bool_results(distances_list)'))
+cProfile.run('get_bool_results(distances_list)')
 
 #edit the BOOL to include the result
 output["SprotFTdist-BOOL"] = bool_result

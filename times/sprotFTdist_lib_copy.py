@@ -461,6 +461,7 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
    #for each of the features
    for residue_list in pdb_ft_residues:
       min_dist = 1000 #reset the smallest distance after each feature
+      print('time for one residue start')
 
       #for each of the residues in that feature
       for aa in residue_list:
@@ -481,6 +482,7 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
                   if d < min_dist:
                      min_dist = d
                      closest_res = aa
+      print('time for one residue stop')
 
       #for each feature add a list with the recorded information
       feature_distances.append ([min_dist, closest_res]) 
