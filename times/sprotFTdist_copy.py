@@ -141,12 +141,12 @@ for feature in feature_distances:
 
    #get the SwissProt information
    (sprot_ac, closest_res_sp) = pdb_sws (pdb_code, chain_id, closest_res_pdb)
-   cProfile.run('pdb_sws (pdb_code, chain_id, closest_res_pdb)')
+   #cProfile.run('pdb_sws (pdb_code, chain_id, closest_res_pdb)')
 
 
    #get feature name for this feature
    feature_id = residue_to_feature (closest_res_sp, sprot_ac)
-   cProfile.run('residue_to_feature (closest_res_sp, sprot_ac)')
+   #cProfile.run('residue_to_feature (closest_res_sp, sprot_ac)')
 
    #change the value for the feature if there isn't one there (=-1)
    if output[feature_id] != -1:
@@ -161,7 +161,7 @@ distances_list = list(output.values())
 #exclude the BOOL result from distance evaluations
 distances_list = distances_list [1:]
 bool_result = get_bool_results(distances_list)
-cProfile.run('get_bool_results(distances_list)')
+#cProfile.run('get_bool_results(distances_list)')
 
 #edit the BOOL to include the result
 output["SprotFTdist-BOOL"] = bool_result

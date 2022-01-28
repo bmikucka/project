@@ -466,11 +466,11 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
 
    #for each of the features
    for residue_list in pdb_ft_residues:
+      start = timeit.timeit()
       min_dist = 1000 #reset the smallest distance after each feature
 
       #for each of the residues in that feature
       for aa in residue_list:
-         start = timeit.timeit()
          #get list of atoms in that residue
          ft_atoms = []
          residue = chain.residue(f"{chain_id}.{aa}")
@@ -488,9 +488,9 @@ def feature_distance (pdb_file, chain_id, resnum_pdb, pdb_ft_residues):
                   if d < min_dist:
                      min_dist = d
                      closest_res = aa
-         end = timeit.timeit()
-         print('Time taken for one residue')
-         print(end - start)
+      end = timeit.timeit()
+      print('Time taken for one residue')
+      print(end - start)
 
 
       #for each feature add a list with the recorded information
