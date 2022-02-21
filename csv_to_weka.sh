@@ -20,7 +20,7 @@ tail -11205 demo.csv >> test.csv
 # for the machine learning
 
 # Convert training data to arff format
-csv2arff -skip -ni inputs.dat dataset train.csv >train.arff
+csv2arff -skip -ni inputs_updated.dat dataset train.csv >train.arff
 # -skip      - skip records with missing values
 # -ni        - do not convert binary inputs to nominal Boolean
 # inputs.dat - file containing list of input fields
@@ -28,7 +28,7 @@ csv2arff -skip -ni inputs.dat dataset train.csv >train.arff
 # train.csv  - the input csv file
 # train.arff - the output arff file
 # Convert test data to arff format
-csv2arff -skip -ni inputs.dat dataset test.csv >test.arff
+csv2arff -skip -ni inputs_updated.dat dataset test.csv >test.arff
 
 # Set parameters for the machine learning
 CLASSIFIER="weka.classifiers.trees.RandomForest"
