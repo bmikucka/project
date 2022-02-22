@@ -18,6 +18,9 @@ n=$(expr $number_1 - 1)
 number_2=$(wc -l pd.csv)
 N=$(expr $number_2 - 1)
 
+lines_pd=$(expr $N / $x)
+lines_snp=$(expr $n / $x)
+
 # change these to:
 # divide into x folds (x from command line) - make sure no overlap in proteins between folds 
 # combine snp and pd 
@@ -25,15 +28,31 @@ N=$(expr $number_2 - 1)
 # split into x parts 
 # PD
 gsplit -a 4 -d -l $(lines_pd) pd.csv pd_part.csv 
-#check if there is a file with leftovers
+
+# check if there is a file with leftovers - add to last file with if there
+file_number=$(echo ${x} | awk '{ printf "%04i\n", $0 }')
+file_number_2=$(echo $(expr(${x} - 1)) | awk '{ printf "%04i\n", $0 }')
+
+if test -f "pd_part.csv${file_number}"; then
+	cat "pd_part.csv${file_number}" >> "pd_part.csv${file_number_2}"
+fi
+
+# check the same protein is not in different groups
 
 
 # SNP
 gsplit -a 4 -d -l $(lines_snp) snp.csv snp_part.csv 
-#check if there is a file with leftovers
+
+# check if there is a file with leftovers
+if test -f "snp_part.csv${file_number}"; then
+	cat "snp_part.csv${file_number}" >> "snp_part.csv${file_number_2}"
+fi
+
+# check the same protein is not in different groups
 
 
-#join pd and snp with same suffix
+
+# join pd and snp with same suffix
 
 for i in pd_part.csv*; do
    p="${i#pd_}"
@@ -48,8 +67,7 @@ do
 done
 
 a=1
-lines_pd=$(expr $N / $x)
-lines_snp=$(expr $n / $x)
+
 
 
 
