@@ -120,6 +120,8 @@ do
 	grep -v Binding tmp_train.csv >> train.csv
 	grep -v Binding tmp_test.csv >> test.csv
 
+	#repeat this step multiple times - balancing
+
 	# Convert training data to arff format
 	csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset train.csv >train.arff
 	# -skip      - skip records with missing values
@@ -139,10 +141,10 @@ do
 
 	# This trains, saves the trained model and tests in one go
 	# To train without the independent testing remove the '-T test.arff'
-	java $CLASSIFIER -I $NTREE -t train.arff -d train.model -T test.arff > test.out
+	java $CLASSIFIER -I $NTREE -t train.arff -d train.model -T test.arff > test_${i}.out
 
 	# This tests on a pre-trained model
-	java $CLASSIFIER -l train.model -T test.arff > test2.out
+	java $CLASSIFIER -l train.model -T test.arff > test2_${i}.out
 
 
 	# Cleanup
