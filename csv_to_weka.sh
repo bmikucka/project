@@ -28,6 +28,10 @@ lines_snp=$(expr $n / $x)
 # split into x parts 
 # PD
 gsplit -a 4 -d -l $(lines_pd) pd.csv pd_part.csv 
+#get rid of first line in first file
+cat pd_part.csv0000 > tmp.csv
+grep -v Binding tmp.csv >> pd_part.csv0000 
+
 
 # check if there is a file with leftovers - add to last file with if there
 file_number=$(echo ${x} | awk '{ printf "%04i\n", $0 }')
@@ -38,10 +42,31 @@ if test -f "pd_part.csv${file_number}"; then
 fi
 
 # check the same protein is not in different groups
+for ((c=0; c==$x; c++))
+	# get names of two consecutive files
+	file_num_2=$(echo ${c} | awk '{ printf "%04i\n", $0 }')
+	file_num_1=$(echo $(expr(${x} - 1)) | awk '{ printf "%04i\n", $0 }')
+	file_1="pd_part.csv${file_num_1}"
+	file_2="pd_part.csv${file_num_2}"
 
+	for (( a=0; a=1; ))
+	do  
+		pdb_last=$(awk 'END{print substr($0,0,4)}' $file_num_1)
+		pdb_first=$(cut -c 1-4 $file_num_2)
+		# if the PDB code in the last line of file 1 and the first line of file 2 are the same then move 
+		# the last line to file 2.
+		if $pdb_last==$pdb_first; 
+			then tail -n 1 "${file_1}" >> "${file_2}"
+			else a=1
+		fi
+	done
+done
 
 # SNP
 gsplit -a 4 -d -l $(lines_snp) snp.csv snp_part.csv 
+#get rid of first line in first file
+cat snp_part.csv0000 > tmp.csv
+grep -v Binding tmp.csv >> snp_part.csv0000 
 
 # check if there is a file with leftovers
 if test -f "snp_part.csv${file_number}"; then
@@ -49,40 +74,51 @@ if test -f "snp_part.csv${file_number}"; then
 fi
 
 # check the same protein is not in different groups
+for ((c=0; c==$x; c++))
+	# get names of two consecutive files
+	file_num_2=$(echo ${c} | awk '{ printf "%04i\n", $0 }')
+	file_num_1=$(echo $(expr(${x} - 1)) | awk '{ printf "%04i\n", $0 }')
+	file_1="snp_part.csv${file_num_1}"
+	file_2="snp_part.csv${file_num_2}"
+
+	for (( a=0; a=1; ))
+	do  
+		pdb_last=$(awk 'END{print substr($0,0,4)}' $file_num_1)
+		pdb_first=$(cut -c 1-4 $file_num_2)
+		# if the PDB code in the last line of file 1 and the first line of file 2 are the same then move 
+		# the last line to file 2.
+		if $pdb_last==$pdb_first; 
+			then tail -n 1 "${file_1}" >> "${file_2}"
+			else a=1
+		fi
+	done
+done
+
 
 
 
 # join pd and snp with same suffix
-
 for i in pd_part.csv*; do
    p="${i#pd_}"
    [[ -f "snp_$p" ]] && cat "$i" "snp_$p" > "$p"
 done
+# now have files with snp and pd data - part.csv0000 (x number)
 
-#have files with snp and pd data - part.csv0000 (x number)
 
 for i in {1..$x}
 do
+	head -1 pd.csv > train.csv 
+	head -1 pd.csv > test.csv
+
+	#join all files but leave one testing set
+
+
+	#clean up the files
+	grep -v Binding tmp_train.csv >> train.csv
+	grep -v Binding tmp_test.csv >> test.csv
  
 done
 
-a=1
-
-
-
-
-
-for i in {1..$x}
-do
-   head -1 pd.csv > pd${x}.csv
-   
-   >> pd${x}.csv
-
-
-   head -1 snp.csv > snp${x}.csv
-
-   a=$(expr $a + 1)
-done
 
 
 
