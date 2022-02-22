@@ -53,8 +53,8 @@ for i in {1..$x}
 	do  
 		pdb_last=$(awk 'END{print substr($0,0,4)}' $file_num_1)
 		pdb_first=$(cut -c 1-4 $file_num_2)
-		# if the PDB code in the last line of file 1 and the first line of file 2 are the same then move 
-		# the last line to file 2.
+		# if the PDB code in the last line of file 1 and the first line 
+		# of file 2 are the same then move the last line to file 2.
 		if $pdb_last==$pdb_first; 
 			then tail -n 1 "${file_1}" >> "${file_2}"
 			else a=1
@@ -85,8 +85,8 @@ for i in {1..$x}
 	do  
 		pdb_last=$(awk 'END{print substr($0,0,4)}' $file_num_1)
 		pdb_first=$(cut -c 1-4 $file_num_2)
-		# if the PDB code in the last line of file 1 and the first line of file 2 are the same then move 
-		# the last line to file 2.
+		# if the PDB code in the last line of file 1 and the first 
+		# line of file 2 are the same then move the last line to file 2.
 		if $pdb_last==$pdb_first; 
 			then tail -n 1 "${file_1}" >> "${file_2}"
 			else a=1
@@ -109,50 +109,44 @@ do
 	head -1 pd.csv > test.csv
 
 	#join all files but leave one testing set
+	test_num=$(echo ${i} | awk '{ printf "%04i\n", $0 }')
+	test_file="part.csv${test_num}"
 
+	# make test and train files
+	cat test_file >> tmp_test.csv
+	cat part.csv* !($test_file) > tmp_train.csv
 
 	#clean up the files
 	grep -v Binding tmp_train.csv >> train.csv
 	grep -v Binding tmp_test.csv >> test.csv
- 
+
+	# Convert training data to arff format
+	csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset train.csv >train.arff
+	# -skip      - skip records with missing values
+	# -ni        - do not convert binary inputs to nominal Boolean
+	# -limits=n  - balancing dataset 
+	# inputs.dat - file containing list of input fields
+	# dataset    - the name of the output field in the CSV file
+	# train.csv  - the input csv file
+	# train.arff - the output arff file
+	# Convert test data to arff format
+
+	csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset test.csv >test.arff
+
+	# Set parameters for the machine learning
+	CLASSIFIER="weka.classifiers.trees.RandomForest"
+	NTREE=100
+
+	# This trains, saves the trained model and tests in one go
+	# To train without the independent testing remove the '-T test.arff'
+	java $CLASSIFIER -I $NTREE -t train.arff -d train.model -T test.arff > test.out
+
+	# This tests on a pre-trained model
+	java $CLASSIFIER -l train.model -T test.arff > test2.out
+
+
+	# Cleanup
+	rm train.csv test.csv train.arff test.arff
+
 done
 
-
-
-
-#check if (x+1)th file - if unequal split into x files
-# make sure all but the first line are not headers
-
-
-tail -11205 demo.csv >> test.csv
-
-# I have created 'inputs.dat' to list the fields of interest as inputs
-# for the machine learning
-
-# Convert training data to arff format
-csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset train.csv >train.arff
-# -skip      - skip records with missing values
-# -ni        - do not convert binary inputs to nominal Boolean
-# -limits=n  - balancing dataset 
-# inputs.dat - file containing list of input fields
-# dataset    - the name of the output field in the CSV file
-# train.csv  - the input csv file
-# train.arff - the output arff file
-# Convert test data to arff format
-
-csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset test.csv >test.arff
-
-# Set parameters for the machine learning
-CLASSIFIER="weka.classifiers.trees.RandomForest"
-NTREE=100
-
-# This trains, saves the trained model and tests in one go
-# To train without the independent testing remove the '-T test.arff'
-java $CLASSIFIER -I $NTREE -t train.arff -d train.model -T test.arff > test.out
-
-# This tests on a pre-trained model
-java $CLASSIFIER -l train.model -T test.arff > test2.out
-
-
-# Cleanup
-rm train.csv test.csv train.arff test.arff
