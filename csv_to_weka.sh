@@ -42,10 +42,10 @@ if test -f "pd_part.csv${file_number}"; then
 fi
 
 # check the same protein is not in different groups
-for ((c=0; c==$x; c++))
+for i in {1..$x}
 	# get names of two consecutive files
-	file_num_2=$(echo ${c} | awk '{ printf "%04i\n", $0 }')
-	file_num_1=$(echo $(expr(${x} - 1)) | awk '{ printf "%04i\n", $0 }')
+	file_num_2=$(echo ${i} | awk '{ printf "%04i\n", $0 }')
+	file_num_1=$(echo $(expr(${i} - 1)) | awk '{ printf "%04i\n", $0 }')
 	file_1="pd_part.csv${file_num_1}"
 	file_2="pd_part.csv${file_num_2}"
 
@@ -74,10 +74,10 @@ if test -f "snp_part.csv${file_number}"; then
 fi
 
 # check the same protein is not in different groups
-for ((c=0; c==$x; c++))
+for i in {1..$x}
 	# get names of two consecutive files
-	file_num_2=$(echo ${c} | awk '{ printf "%04i\n", $0 }')
-	file_num_1=$(echo $(expr(${x} - 1)) | awk '{ printf "%04i\n", $0 }')
+	file_num_2=$(echo ${i} | awk '{ printf "%04i\n", $0 }')
+	file_num_1=$(echo $(expr(${i} - 1)) | awk '{ printf "%04i\n", $0 }')
 	file_1="snp_part.csv${file_num_1}"
 	file_2="snp_part.csv${file_num_2}"
 
@@ -93,8 +93,6 @@ for ((c=0; c==$x; c++))
 		fi
 	done
 done
-
-
 
 
 # join pd and snp with same suffix
