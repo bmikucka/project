@@ -39,7 +39,8 @@ for file in pdcsv/*
        fi
    done
 
-# files ordered by SwissProt accession number - default alphabetically 
+# files ordered by SwissProt accession number 
+
 
 # join csv files 
 ~/bin/join_csv.sh snp
@@ -51,22 +52,22 @@ x=$1
 
 # find n - dataset size for SNP
 number_1=$(wc -l snp.csv)
-n=$(expr $number_1 - 1)
+n=$(expr ${number_1} - 1)
 #find N - dataset size for PD
 number_2=$(wc -l pd.csv)
-N=$(expr $number_2 - 1)
+N=$(expr ${number_2} - 1)
 
 #number of balancing runs depending on how imbalanced the datasets are
-m=$(expr $N / $n)
+m=$(expr ${N} / ${n})
 
 # number of lines per each fold (for x-fold validation)
-lines_pd=$(expr $N / $x)
-lines_snp=$(expr $n / $x)
+lines_pd=$(expr ${N} / ${x})
+lines_snp=$(expr ${n} / ${x})
 
 
 # split into x parts 
 # PD
-gsplit -a 4 -d -l $(lines_pd) pd.csv pd_part.csv 
+gsplit -a 4 -d -l ${lines_pd} pd.csv pd_part.csv 
 #get rid of first line in first file
 cat pd_part.csv0000 > tmp.csv
 grep -v Binding tmp.csv >> pd_part.csv0000 
@@ -74,7 +75,7 @@ grep -v Binding tmp.csv >> pd_part.csv0000
 
 # check if there is a file with leftovers - add to last file with if there
 file_number=$(echo ${x} | awk '{ printf "%04i\n", $0 }')
-file_number_2=$(echo $(expr(${x} - 1)) | awk '{ printf "%04i\n", $0 }')
+file_number_2=$(echo $(expr ${x} - 1) | awk '{ printf "%04i\n", $0 }')
 
 if test -f "pd_part.csv${file_number}"; then
 	cat "pd_part.csv${file_number}" >> "pd_part.csv${file_number_2}"
@@ -84,7 +85,7 @@ fi
 for i in {1..$x}
 	# get names of two consecutive files
 	file_num_2=$(echo ${i} | awk '{ printf "%04i\n", $0 }')
-	file_num_1=$(echo $(expr(${i} - 1)) | awk '{ printf "%04i\n", $0 }')
+	file_num_1=$(echo $(expr ${i} - 1) | awk '{ printf "%04i\n", $0 }')
 	file_1="pd_part.csv${file_num_1}"
 	file_2="pd_part.csv${file_num_2}"
 
@@ -102,7 +103,7 @@ for i in {1..$x}
 done
 
 # SNP
-gsplit -a 4 -d -l $(lines_snp) snp.csv snp_part.csv 
+gsplit -a 4 -d -l ${lines_snp} snp.csv snp_part.csv 
 #get rid of first line in first file
 cat snp_part.csv0000 > tmp.csv
 grep -v Binding tmp.csv >> snp_part.csv0000 
@@ -116,7 +117,7 @@ fi
 for i in {1..$x}
 	# get names of two consecutive files
 	file_num_2=$(echo ${i} | awk '{ printf "%04i\n", $0 }')
-	file_num_1=$(echo $(expr(${i} - 1)) | awk '{ printf "%04i\n", $0 }')
+	file_num_1=$(echo $(expr ${i} - 1) | awk '{ printf "%04i\n", $0 }')
 	file_1="snp_part.csv${file_num_1}"
 	file_2="snp_part.csv${file_num_2}"
 
