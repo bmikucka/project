@@ -9,3 +9,4 @@ dataset=$1
    cat ${dataset}csv/* > tmp.csv
    head -1 tmp.csv > ${dataset}.csv
    grep -v Binding tmp.csv >> ${dataset}.csv
+   rm tmp.csv
