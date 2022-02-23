@@ -42,8 +42,8 @@ for file in pdcsv/*
 # files ordered by SwissProt accession number - default alphabetically 
 
 # join csv files 
-./join_csv.sh snp
-./join_csv.sh pd 
+~/bin/join_csv.sh snp
+~/bin/join_csv.sh pd 
 
 
 # cross validation number from command line
