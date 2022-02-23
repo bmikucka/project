@@ -1,8 +1,5 @@
 
-# Input: x-fold validation
-
-
-# Note that CSV2arff will do the balancing for you by using -limit
+# Input: a number x for x-fold validation
 
 # Weka 
 export WEKA=/home/amartin/weka-3-8-3
@@ -120,7 +117,8 @@ do
 	grep -v Binding tmp_train.csv >> train.csv
 	grep -v Binding tmp_test.csv >> test.csv
 
-	#repeat this step multiple times - balancing
+	# repeat this step multiple times - balancing
+	# Note that CSV2arff will do the balancing for you by using -limit
 
 	# Convert training data to arff format
 	csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset train.csv >train.arff

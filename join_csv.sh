@@ -1,7 +1,7 @@
 #join all csvs together - only keep one header
 #take SNP/PD from command line
 
-dataset = $1
+dataset=$1
 
 # Join the csv files
    cat ${dataset}csv/* > tmp.csv
