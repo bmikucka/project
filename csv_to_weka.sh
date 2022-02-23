@@ -67,13 +67,13 @@ lines_snp=$(expr ${n} / ${x})
 
 # split into x parts 
 # PD
-gsplit -a 4 -d -l ${lines_pd} pd.csv pd_part.csv 
+split -a 4 -d -l ${lines_pd} pd.csv pd_part.csv 
 #get rid of first line in first file
 cat pd_part.csv0000 > tmp.csv
 grep -v Binding tmp.csv >> pd_part.csv0000 
 
 
-# check if there is a file with leftovers - add to last file with if there
+# check if there is a file with leftovers - add to last file if there
 file_number=$(echo ${x} | awk '{ printf "%04i\n", $0 }')
 file_number_2=$(echo $(expr ${x} - 1) | awk '{ printf "%04i\n", $0 }')
 
@@ -103,7 +103,7 @@ for i in {1..$x}
 done
 
 # SNP
-gsplit -a 4 -d -l ${lines_snp} snp.csv snp_part.csv 
+split -a 4 -d -l ${lines_snp} snp.csv snp_part.csv 
 #get rid of first line in first file
 cat snp_part.csv0000 > tmp.csv
 grep -v Binding tmp.csv >> snp_part.csv0000 
