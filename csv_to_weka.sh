@@ -1,28 +1,68 @@
 
 #!/bin/sh
 
+#needed to run:
+#SNP and PD directories with relevant json files 
+#join_csv.sh, inputs_updated.dat
+
 # Input: a number x for x-fold validation
 
 # Weka 
 export WEKA=/home/amartin/weka-3-8-3
 export CLASSPATH="$WEKA/weka.jar"
 
-# Split up the demo csv file into train and test sets
+#convert json to csv
+mkdir -p snpcsv
+   for file in SNP/*.json
+   do
+       ~/bin/json2csv_uniprot_allPDB.pl $file >snpcsv/`basename $file .json`.csv
+   done
 
-#cross validation number from command line
+mkdir -p pdcsv
+   for file in PD/*.json
+   do
+       ~/bin/json2csv_uniprot_allPDB.pl $file >pdcsv/`basename $file .json`.csv
+   done
+
+#remove error files
+for file in snpcsv/*
+   do
+       if grep -q ERROR $file ; then
+           rm -f $file
+       fi
+   done
+
+for file in pdcsv/*
+   do
+       if grep -q ERROR $file ; then
+           rm -f $file
+       fi
+   done
+
+# files ordered by SwissProt accession number - default alphabetically 
+
+# join csv files 
+./join_csv.sh snp
+./join_csv.sh pd 
+
+
+# cross validation number from command line
 x=$1
-#find n
+
+# find n - dataset size for SNP
 number_1=$(wc -l snp.csv)
 n=$(expr $number_1 - 1)
+#find N - dataset size for PD
 number_2=$(wc -l pd.csv)
 N=$(expr $number_2 - 1)
 
+#number of balancing runs depending on how imbalanced the datasets are
+m=$(expr $N / $n)
+
+# number of lines per each fold (for x-fold validation)
 lines_pd=$(expr $N / $x)
 lines_snp=$(expr $n / $x)
 
-# change these to:
-# divide into x folds (x from command line) - make sure no overlap in proteins between folds 
-# combine snp and pd 
 
 # split into x parts 
 # PD
@@ -50,9 +90,9 @@ for i in {1..$x}
 
 	for (( a=0; a=1; ))
 	do  
-		pdb_last=$(awk 'END{print substr($0,0,4)}' $file_num_1)
-		pdb_first=$(cut -c 1-4 $file_num_2)
-		# if the PDB code in the last line of file 1 and the first line 
+		id_last=$(awk 'END{print substr($0,3,6)}' $file_num_1)
+		id_first=$(cut -c 3-8 $file_num_2)
+		# if the SwissProt ac in the last line of file 1 and the first line 
 		# of file 2 are the same then move the last line to file 2.
 		if $pdb_last==$pdb_first; 
 			then tail -n 1 "${file_1}" >> "${file_2}"
@@ -82,8 +122,8 @@ for i in {1..$x}
 
 	for (( a=0; a=1; ))
 	do  
-		pdb_last=$(awk 'END{print substr($0,0,4)}' $file_num_1)
-		pdb_first=$(cut -c 1-4 $file_num_2)
+		pdb_last=$(awk 'END{print substr($0,3,6)}' $file_num_1)
+		pdb_first=$(cut -c 3-8 $file_num_2)
 		# if the PDB code in the last line of file 1 and the first 
 		# line of file 2 are the same then move the last line to file 2.
 		if $pdb_last==$pdb_first; 
@@ -122,33 +162,35 @@ do
 	# repeat this step multiple times - balancing
 	# Note that CSV2arff will do the balancing for you by using -limit
 
-	# Convert training data to arff format
-	csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset train.csv >train.arff
-	# -skip      - skip records with missing values
-	# -ni        - do not convert binary inputs to nominal Boolean
-	# -limits=n  - balancing dataset 
-	# inputs.dat - file containing list of input fields
-	# dataset    - the name of the output field in the CSV file
-	# train.csv  - the input csv file
-	# train.arff - the output arff file
-	# Convert test data to arff format
+	for j in {1..$m}
+	do
+		# Convert training data to arff format
+		csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset train.csv >train.arff
+		# -skip      - skip records with missing values
+		# -ni        - do not convert binary inputs to nominal Boolean
+		# -limits=n  - balancing dataset 
+		# inputs.dat - file containing list of input fields
+		# dataset    - the name of the output field in the CSV file
+		# train.csv  - the input csv file
+		# train.arff - the output arff file
+		# Convert test data to arff format
 
-	csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset test.csv >test.arff
+		csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset test.csv >test.arff
 
-	# Set parameters for the machine learning
-	CLASSIFIER="weka.classifiers.trees.RandomForest"
-	NTREE=100
+		# Set parameters for the machine learning
+		CLASSIFIER="weka.classifiers.trees.RandomForest"
+		NTREE=100
 
-	# This trains, saves the trained model and tests in one go
-	# To train without the independent testing remove the '-T test.arff'
-	java $CLASSIFIER -I $NTREE -t train.arff -d train.model -T test.arff > test_${i}.out
+		# This trains, saves the trained model and tests in one go
+		# To train without the independent testing remove the '-T test.arff'
+		java $CLASSIFIER -I $NTREE -t train.arff -d train.model -T test.arff > test_${i}_${j}.out
 
-	# This tests on a pre-trained model
-	java $CLASSIFIER -l train.model -T test.arff > test2_${i}.out
+		# This tests on a pre-trained model
+		java $CLASSIFIER -l train.model -T test.arff > test2_${i}_${j}.out
 
 
-	# Cleanup
-	rm train.csv test.csv train.arff test.arff
-
+		# Cleanup
+		rm train.csv test.csv train.arff test.arff
+	done
 done
 
