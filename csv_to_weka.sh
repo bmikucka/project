@@ -1,4 +1,6 @@
 
+#!/bin/sh
+
 # Input: a number x for x-fold validation
 
 # Weka 

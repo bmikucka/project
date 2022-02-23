@@ -1,3 +1,5 @@
+ #!/bin/sh
+
 #join all csvs together - only keep one header
 #take SNP/PD from command line
 
