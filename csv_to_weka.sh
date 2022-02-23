@@ -94,7 +94,7 @@ for i in {1..$x}
 		id_first=$(cut -c 3-8 $file_num_2)
 		# if the SwissProt ac in the last line of file 1 and the first line 
 		# of file 2 are the same then move the last line to file 2.
-		if $pdb_last==$pdb_first; 
+		if $id_last==$id_first; 
 			then tail -n 1 "${file_1}" >> "${file_2}"
 			else a=1
 		fi
