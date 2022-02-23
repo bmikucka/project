@@ -122,11 +122,11 @@ for i in {1..$x}
 
 	for (( a=0; a=1; ))
 	do  
-		pdb_last=$(awk 'END{print substr($0,3,6)}' $file_num_1)
-		pdb_first=$(cut -c 3-8 $file_num_2)
+		id_last=$(awk 'END{print substr($0,3,6)}' $file_num_1)
+		id_first=$(cut -c 3-8 $file_num_2)
 		# if the PDB code in the last line of file 1 and the first 
 		# line of file 2 are the same then move the last line to file 2.
-		if $pdb_last==$pdb_first; 
+		if $id_last==$id_first; 
 			then tail -n 1 "${file_1}" >> "${file_2}"
 			else a=1
 		fi
