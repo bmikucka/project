@@ -126,20 +126,20 @@ sub SProtFT_dist
     my $result_motif = "";
     my $result_lipid = "";
     
-    if   ($$pResults{'SprotFTdist-ACT_SITE'} ne "")  {$result_actsite = $$pResults{'SprotFTdist-ACT_SITE'};}
-    if   ($$pResults{'SprotFTdist-BINDING'} ne "")   {$result_binding = $$pResults{'SprotFTdist-BINDING'};}
-    if   ($$pResults{'SprotFTdist-CA_BIND'} ne "")   {$result_cabind = $$pResults{'SprotFTdist-CA_BIND'};}
-    if   ($$pResults{'SprotFTdist-DNA_BIND'} ne "")  {$result_dnabind = $$pResults{'SprotFTdist-DNA_BIND'};}
-    if   ($$pResults{'SprotFTdist-NP_BIND'} ne "")   {$result_npbind = $$pResults{'SprotFTdist-NP_BIND'};}
-    if   ($$pResults{'SprotFTdist-METAL'} ne "")     {$result_metal = $$pResults{'SprotFTdist-METAL'};}
-    if   ($$pResults{'SprotFTdist-MOD_RES'} ne "")   {$result_modres = $$pResults{'SprotFTdist-MOD_RES'};}
-    if   ($$pResults{'SprotFTdist-CARBOHYD'} ne "")  {$result_carbohyd = $$pResults{'SprotFTdist-CARBOHYD'};}
-    if   ($$pResults{'SprotFTdist-MOTIF'} ne "")     {$result_motif = $$pResults{'SprotFTdist-MOTIF'};} 
-    if   ($$pResults{'SprotFTdist-LIPID'} ne "")     {$result_lipid = $$pResults{'SprotFTdist-LIPID'};}
+    if      ($$pResults{'SprotFTdist-ACT_SITE'} ne "")  {$result_actsite = $$pResults{'SprotFTdist-ACT_SITE'};}
+    elsif   ($$pResults{'SprotFTdist-BINDING'} ne "")   {$result_binding = $$pResults{'SprotFTdist-BINDING'};}
+    elsif   ($$pResults{'SprotFTdist-CA_BIND'} ne "")   {$result_cabind = $$pResults{'SprotFTdist-CA_BIND'};}
+    elsif   ($$pResults{'SprotFTdist-DNA_BIND'} ne "")  {$result_dnabind = $$pResults{'SprotFTdist-DNA_BIND'};}
+    elsif   ($$pResults{'SprotFTdist-NP_BIND'} ne "")   {$result_npbind = $$pResults{'SprotFTdist-NP_BIND'};}
+    elsif   ($$pResults{'SprotFTdist-METAL'} ne "")     {$result_metal = $$pResults{'SprotFTdist-METAL'};}
+    elsif   ($$pResults{'SprotFTdist-MOD_RES'} ne "")   {$result_modres = $$pResults{'SprotFTdist-MOD_RES'};}
+    elsif   ($$pResults{'SprotFTdist-CARBOHYD'} ne "")  {$result_carbohyd = $$pResults{'SprotFTdist-CARBOHYD'};}
+    elsif   ($$pResults{'SprotFTdist-MOTIF'} ne "")     {$result_motif = $$pResults{'SprotFTdist-MOTIF'};} 
+    elsif   ($$pResults{'SprotFTdist-LIPID'} ne "")     {$result_lipid = $$pResults{'SprotFTdist-LIPID'};}
 
     else   
     {
-         $result = '?,?,?,?,?,?,?,?,?,?';
+         $result = '-1,-1,-1,-1,-1,-1,-1,-1,-1,-1';
     }
 
     $result = "$result_actsite,$result_binding,$result_cabind,$result_dnabind,$result_npbind,$result_metal,$result_modres,$result_carbohyd,$result_motif,$result_lipid";
