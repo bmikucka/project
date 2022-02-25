@@ -142,7 +142,7 @@ sub SProtFT_dist
          $result = '-1,-1,-1,-1,-1,-1,-1,-1,-1,-1';
     }
 
-    $result = "$result_actsite,$result_binding,$result_cabind,$result_dnabind,$result_npbind,$result_metal,$result_modres,$result_carbohyd,$result_motif,$result_lipid";
+    $result = "${result_actsite},${result_binding},${result_cabind},${result_dnabind},${result_npbind},${result_metal},${result_modres},${result_carbohyd},${result_motif},${result_lipid}";
     
 
     return($result); 
