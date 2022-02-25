@@ -137,10 +137,6 @@ sub SProtFT_dist
     elsif   ($$pResults{'SprotFTdist-MOTIF'} ne "")     {$result_motif = $$pResults{'SprotFTdist-MOTIF'};} 
     elsif   ($$pResults{'SprotFTdist-LIPID'} ne "")     {$result_lipid = $$pResults{'SprotFTdist-LIPID'};}
 
-    else   
-    {
-         $result = '-1,-1,-1,-1,-1,-1,-1,-1,-1,-1';
-    }
 
     $result = "${result_actsite},${result_binding},${result_cabind},${result_dnabind},${result_npbind},${result_metal},${result_modres},${result_carbohyd},${result_motif},${result_lipid}";
     
