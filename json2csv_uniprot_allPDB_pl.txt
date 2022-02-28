@@ -115,16 +115,16 @@ sub SProtFT_dist
 {
     my($pResults) = @_;
     my $result = "";
-    my $result_actsite = "";
-    my $result_binding = "";
-    my $result_cabind = "";
-    my $result_dnabind = "";
-    my $result_npbind = "";
-    my $result_metal = "";
-    my $result_modres = "";
-    my $result_carbohyd = "";
-    my $result_motif = "";
-    my $result_lipid = "";
+    my $result_actsite = "?";
+    my $result_binding = "?";
+    my $result_cabind = "?";
+    my $result_dnabind = "?";
+    my $result_npbind = "?";
+    my $result_metal = "?";
+    my $result_modres = "?";
+    my $result_carbohyd = "?";
+    my $result_motif = "?";
+    my $result_lipid = "?";
     
     if      ($$pResults{'SprotFTdist-ACT_SITE'} ne "")  {$result_actsite = $$pResults{'SprotFTdist-ACT_SITE'};}
     elsif   ($$pResults{'SprotFTdist-BINDING'} ne "")   {$result_binding = $$pResults{'SprotFTdist-BINDING'};}
@@ -138,7 +138,7 @@ sub SProtFT_dist
     elsif   ($$pResults{'SprotFTdist-LIPID'} ne "")     {$result_lipid = $$pResults{'SprotFTdist-LIPID'};}
 
 
-    $result = "${result_actsite},${result_binding},${result_cabind},${result_dnabind},${result_npbind},${result_metal},${result_modres},${result_carbohyd},${result_motif},${result_lipid}";
+    $result = "$result_actsite,$result_binding,$result_cabind,$result_dnabind,$result_npbind,$result_metal,$result_modres,$result_carbohyd,$result_motif,$result_lipid";
     
 
     return($result); 
