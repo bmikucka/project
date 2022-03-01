@@ -60,107 +60,51 @@ N=$(expr ${number_2} - 1)
 #number of balancing runs depending on how imbalanced the datasets are
 m=$(expr ${N} / ${n})
 
-# number of lines per each fold (for x-fold validation)
-lines_pd=$(expr ${N} / ${x})
-lines_snp=$(expr ${n} / ${x})
+
+#split the files into subdirectories
+mkdir -p PD_folds
+cd PD_folds
+~/bin/xvalidate.pl -x${x} ../pd.csv 
+cd ..
 
 
-# split into x parts 
-# PD
-split -a 4 -d -l ${lines_pd} pd.csv pd_part.csv 
-#get rid of first line in first file
-cat pd_part.csv0000 > tmp.csv
-grep -v Binding tmp.csv >> pd_part.csv0000 
-
-
-# check if there is a file with leftovers - add to last file if there
-file_number=$(echo ${x} | awk '{ printf "%04i\n", $0 }')
-file_number_2=$(echo $(expr ${x} - 1) | awk '{ printf "%04i\n", $0 }')
-
-if test -f "pd_part.csv${file_number}"; then
-	cat "pd_part.csv${file_number}" >> "pd_part.csv${file_number_2}"
-fi
-
-# check the same protein is not in different groups
-for i in {1..$x}
-	# get names of two consecutive files
-	file_num_2=$(echo ${i} | awk '{ printf "%04i\n", $0 }')
-	file_num_1=$(echo $(expr ${i} - 1) | awk '{ printf "%04i\n", $0 }')
-	file_1="pd_part.csv${file_num_1}"
-	file_2="pd_part.csv${file_num_2}"
-
-	for (( a=0; a=1; ))
-	do  
-		id_last=$(awk 'END{print substr($0,3,6)}' $file_num_1)
-		id_first=$(cut -c 3-8 $file_num_2)
-		# if the SwissProt ac in the last line of file 1 and the first line 
-		# of file 2 are the same then move the last line to file 2.
-		if $id_last==$id_first; 
-			then tail -n 1 "${file_1}" >> "${file_2}"
-			else a=1
-		fi
-	done
-done
-
-# SNP
-split -a 4 -d -l ${lines_snp} snp.csv snp_part.csv 
-#get rid of first line in first file
-cat snp_part.csv0000 > tmp.csv
-grep -v Binding tmp.csv >> snp_part.csv0000 
-
-# check if there is a file with leftovers
-if test -f "snp_part.csv${file_number}"; then
-	cat "snp_part.csv${file_number}" >> "snp_part.csv${file_number_2}"
-fi
-
-# check the same protein is not in different groups
-for i in {1..$x}
-	# get names of two consecutive files
-	file_num_2=$(echo ${i} | awk '{ printf "%04i\n", $0 }')
-	file_num_1=$(echo $(expr ${i} - 1) | awk '{ printf "%04i\n", $0 }')
-	file_1="snp_part.csv${file_num_1}"
-	file_2="snp_part.csv${file_num_2}"
-
-	for (( a=0; a=1; ))
-	do  
-		id_last=$(awk 'END{print substr($0,3,6)}' $file_num_1)
-		id_first=$(cut -c 3-8 $file_num_2)
-		# if the PDB code in the last line of file 1 and the first 
-		# line of file 2 are the same then move the last line to file 2.
-		if $id_last==$id_first; 
-			then tail -n 1 "${file_1}" >> "${file_2}"
-			else a=1
-		fi
-	done
-done
-
+mkdir -p SNP_folds
+cd SNP_folds
+~/bin/xvalidate.pl -x${x} ../snp.csv 
+cd ..
 
 # join pd and snp with same suffix
-for i in pd_part.csv*; do
-   p="${i#pd_}"
-   [[ -f "snp_$p" ]] && cat "$i" "snp_$p" > "$p"
+mkdir -p JOIN_folds
+ls PD_folds | while read file; do
+  cat PD_folds/"$file" SNP_folds/"$file" >> JOIN_folds/tmp.csv
+  head -1 JOIN_folds/tmp.csv > JOIN_folds/"$file"
+  grep -v Binding JOIN_folds/tmp.csv >> JOIN_folds/"$file"
+  rm JOIN_folds/tmp.csv
 done
-# now have files with snp and pd data - part.csv0000 (x number)
 
 
+#combine folds with a different fold as test set each time
 for i in {1..$x}
 do
 	head -1 pd.csv > train.csv 
 	head -1 pd.csv > test.csv
 
 	#join all files but leave one testing set
-	test_num=$(echo ${i} | awk '{ printf "%04i\n", $0 }')
-	test_file="part.csv${test_num}"
+	test_num=$(expr ${i} - 1)
+	#test_file= /*${test_num}.csv
 
 	# make test and train files
-	cat test_file >> tmp_test.csv
-	cat part.csv* !($test_file) > tmp_train.csv
+	cat JOIN_folds/*${test_num}.csv > ./tmp_test.csv
+	cat JOIN_folds/fold_* !(JOIN_folds/*${test_num}.csv) > ./tmp_train.csv
 
 	#clean up the files
 	grep -v Binding tmp_train.csv >> train.csv
 	grep -v Binding tmp_test.csv >> test.csv
 
-	# repeat this step multiple times - balancing
+	#clean up
+	rm tmp_test.csv tmp_train.csv
+
+	# repeat the next step multiple times - balancing done N/n times
 	# Note that CSV2arff will do the balancing for you by using -limit
 
 	for j in {1..$m}
