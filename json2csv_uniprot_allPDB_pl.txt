@@ -114,7 +114,7 @@ sub SProtFT_dist
 {
     # 31.01.2021 Added SProtFT_dist By: BM
     my($pResults) = @_;
-    my $result = "?,?,?,?,?,?,?,?,?,?";
+    my $result = "";
     my $result_actsite = "?";
     my $result_binding = "?";
     my $result_cabind = "?";
