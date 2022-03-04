@@ -15,13 +15,13 @@ export CLASSPATH="$WEKA/weka.jar"
 mkdir -p snpcsv
    for file in SNP/*.json
    do
-       ~/bin/json2csv_uniprot_allPDB.pl $file >snpcsv/`basename $file .json`.csv
+       ~/bin/json2csv_uniprot_allPDB_pl.txt $file >snpcsv/`basename $file .json`.csv
    done
 
 mkdir -p pdcsv
    for file in PD/*.json
    do
-       ~/bin/json2csv_uniprot_allPDB.pl $file >pdcsv/`basename $file .json`.csv
+       ~/bin/json2csv_uniprot_allPDB_pl.txt $file >pdcsv/`basename $file .json`.csv
    done
 
 #remove error files
