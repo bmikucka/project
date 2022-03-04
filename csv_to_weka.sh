@@ -64,13 +64,13 @@ m=$(expr $N / $n)
 #split the files into subdirectories
 mkdir -p PD_folds
 cd PD_folds
-~/bin/xvalidate.pl -x${x} pd.csv 
+~/bin/xvalidate.pl -x${x} ../pd.csv 
 cd ..
 
 
 mkdir -p SNP_folds
 cd SNP_folds
-~/bin/xvalidate.pl -x${x} snp.csv 
+~/bin/xvalidate.pl -x${x} ../snp.csv 
 cd ..
 
 # join pd and snp with same suffix
