@@ -15,13 +15,13 @@ export CLASSPATH="$WEKA/weka.jar"
 mkdir -p snpcsv
    for file in SNP/*.json
    do
-       ~/bin/json2csv_uniprot_allPDB_pl.txt $file >snpcsv/`basename $file .json`.csv
+       ~/bin/json2csv_uniprot_allPDB_pl.txt $file SNP >snpcsv/`basename $file .json`.csv
    done
 
 mkdir -p pdcsv
    for file in PD/*.json
    do
-       ~/bin/json2csv_uniprot_allPDB_pl.txt $file >pdcsv/`basename $file .json`.csv
+       ~/bin/json2csv_uniprot_allPDB_pl.txt $file PD >pdcsv/`basename $file .json`.csv
    done
 
 #remove error files
@@ -58,7 +58,12 @@ number_2=$(wc -l pd.csv)
 N=$(expr $number_2 - 1)
 
 #number of balancing runs depending on how imbalanced the datasets are
-m=$(expr $N / $n)
+if $N -gt $n ; 
+	then
+		m=$(expr $N / $n)
+	else
+		m==$(expr $n / $N)
+fi
 
 
 #split the files into subdirectories
@@ -90,7 +95,7 @@ do
 	head -1 pd.csv > test.csv
 
 	#join all files but leave one testing set
-	test_num=$(expr ${i} - 1)
+	test_num=$(expr $i - 1)
 	#test_file= /*${test_num}.csv
 
 	# make test and train files
