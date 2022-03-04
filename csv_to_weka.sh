@@ -24,6 +24,8 @@ mkdir -p pdcsv
        ~/bin/json2csv_uniprot_allPDB_pl.txt $file PD >pdcsv/`basename $file .json`.csv
    done
 
+echo Done: JSON to CSV conversion.
+
 #remove error files
 for file in snpcsv/*
    do
@@ -39,13 +41,14 @@ for file in pdcsv/*
        fi
    done
 
-# files ordered by SwissProt accession number 
+echo Done: removed csv files with errors from pdcsv and snpcsv.
 
 
 # join csv files 
 ~/bin/join_csv.sh snp
 ~/bin/join_csv.sh pd 
 
+echo Done: All SNP and PD csv files joined into snp.csv and pd.csv.
 
 # cross validation number from command line
 x=$1
@@ -58,13 +61,14 @@ number_2=$(wc -l pd.csv)
 N=$(expr $number_2 - 1)
 
 #number of balancing runs depending on how imbalanced the datasets are
-if $N -gt $n ; 
+if [ $N -gt $n ];
 	then
 		m=$(expr $N / $n)
 	else
-		m==$(expr $n / $N)
+		m=$(expr $n / $N)
 fi
 
+echo Done: Calculations of datapoints and number of balancing runs.
 
 #split the files into subdirectories
 mkdir -p PD_folds
@@ -78,6 +82,8 @@ cd SNP_folds
 ~/bin/xvalidate.pl -x${x} ../snp.csv 
 cd ..
 
+echo Done: SNP and PD split into $x folds.
+
 # join pd and snp with same suffix
 mkdir -p JOIN_folds
 ls PD_folds | while read file; do
@@ -87,6 +93,7 @@ ls PD_folds | while read file; do
   rm JOIN_folds/tmp.csv
 done
 
+echo Done: SNP and PD folds joined into $x files- in JOIN_folds directory.
 
 #combine folds with a different fold as test set each time
 for i in {1..$x}
@@ -110,6 +117,8 @@ do
 
 	#clean up
 	rm tmp_test.csv tmp_train.csv
+
+	echo Done: Test and training sets set up for Weka ($i out of $x).
 
 	# repeat the next step multiple times - balancing done N/n times
 	# Note that CSV2arff will do the balancing for you by using -limit
@@ -143,6 +152,8 @@ do
 
 		# Cleanup
 		rm train.csv test.csv train.arff test.arff
+
+		echo Done: Weka for training set $i and $j (cross-validation).
 	done
 done
 
