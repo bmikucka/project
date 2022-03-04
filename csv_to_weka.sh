@@ -52,25 +52,25 @@ x=$1
 
 # find n - dataset size for SNP
 number_1=$(wc -l snp.csv)
-n=$(expr ${number_1} - 1)
+n=$(expr $number_1 - 1)
 #find N - dataset size for PD
 number_2=$(wc -l pd.csv)
-N=$(expr ${number_2} - 1)
+N=$(expr $number_2 - 1)
 
 #number of balancing runs depending on how imbalanced the datasets are
-m=$(expr ${N} / ${n})
+m=$(expr $N / $n)
 
 
 #split the files into subdirectories
 mkdir -p PD_folds
 cd PD_folds
-~/bin/xvalidate.pl -x${x} ../pd.csv 
+~/bin/xvalidate.pl -x${x} pd.csv 
 cd ..
 
 
 mkdir -p SNP_folds
 cd SNP_folds
-~/bin/xvalidate.pl -x${x} ../snp.csv 
+~/bin/xvalidate.pl -x${x} snp.csv 
 cd ..
 
 # join pd and snp with same suffix
@@ -95,7 +95,9 @@ do
 
 	# make test and train files
 	cat JOIN_folds/*${test_num}.csv > ./tmp_test.csv
-	cat JOIN_folds/fold_* !(JOIN_folds/*${test_num}.csv) > ./tmp_train.csv
+	#cat JOIN_folds/fold_* !(JOIN_folds/*${test_num}.csv) > ./tmp_train.csv
+	cat ./JOIN_folds/!(*${test_num}.csv) > ./tmp_train.csv
+
 
 	#clean up the files
 	grep -v Binding tmp_train.csv >> train.csv
