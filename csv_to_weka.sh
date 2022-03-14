@@ -15,13 +15,19 @@ export CLASSPATH="$WEKA/weka.jar"
 mkdir -p snpcsv
    for file in SNP/*.json
    do
-       ~/bin/json2csv_uniprot_allPDB_pl.txt $file SNP >snpcsv/`basename $file .json`.csv
+   	   echo $file >> json2csv.log
+   	   cleanjson.pl $file > cleaned.json
+       ~/bin/json2csv_uniprot_allPDB_pl.txt $file SNP >snpcsv/`basename $file .json`.csv 2>> json2csv.log
+       rm cleaned.json
    done
 
 mkdir -p pdcsv
    for file in PD/*.json
    do
-       ~/bin/json2csv_uniprot_allPDB_pl.txt $file PD >pdcsv/`basename $file .json`.csv
+   	   echo $file >> json2csv.log
+   	   cleanjson.pl $file > cleaned.json
+       ~/bin/json2csv_uniprot_allPDB_pl.txt $file PD >pdcsv/`basename $file .json`.csv 2>> json2csv.log
+       rm cleaned.json
    done
 
 echo Done: JSON to CSV conversion.
@@ -54,18 +60,20 @@ echo Done: All SNP and PD csv files joined into snp.csv and pd.csv.
 x=$1
 
 # find n - dataset size for SNP
-number_1=$(wc -l snp.csv)
-n=$(expr $number_1 - 1)
+SNP_lines=$(cat snp.csv | wc -l)
+snp_datasize=$(expr $SNP_lines - 1)
 #find N - dataset size for PD
-number_2=$(wc -l pd.csv)
-N=$(expr $number_2 - 1)
+PD_lines=$(cat pd.csv | wc -l)
+pd_datasize=$(expr $PD_lines - 1)
 
 #number of balancing runs depending on how imbalanced the datasets are
-if [ $N -gt $n ];
+if [ $pd_datasize -gt $snp_datasize ];
 	then
-		m=$(expr $N / $n)
+		balancing_runs=$(expr $pd_datasize / $snp_datasize)
+		small_dataset=$pd_datasize
 	else
-		m=$(expr $n / $N)
+		balancing_runs=$(expr $snp_datasize / $pd_datasize)
+		small_dataset=$snp_datasize
 fi
 
 echo Done: Calculations of datapoints and number of balancing runs.
@@ -73,13 +81,13 @@ echo Done: Calculations of datapoints and number of balancing runs.
 #split the files into subdirectories
 mkdir -p PD_folds
 cd PD_folds
-~/bin/xvalidate.pl -x${x} ../pd.csv 
+~/bin/xvalidate.pl -n=${x} ../pd.csv 
 cd ..
 
 
 mkdir -p SNP_folds
 cd SNP_folds
-~/bin/xvalidate.pl -x${x} ../snp.csv 
+~/bin/xvalidate.pl -n=${x} ../snp.csv 
 cd ..
 
 echo Done: SNP and PD split into $x folds.
@@ -96,8 +104,8 @@ done
 echo Done: SNP and PD folds joined into $x files- in JOIN_folds directory.
 
 #combine folds with a different fold as test set each time
-for i in {1..$x}
-do
+for ((i=0; i<$x; i++)); do
+
 	head -1 pd.csv > train.csv 
 	head -1 pd.csv > test.csv
 
@@ -123,10 +131,12 @@ do
 	# repeat the next step multiple times - balancing done N/n times
 	# Note that CSV2arff will do the balancing for you by using -limit
 
-	for j in {1..$m}
-	do
+	csv2arff -skip -ni -limit=${small_dataset} inputs_updated.dat dataset test.csv >test.arff
+
+	for ((j=0; j<$balancing_runs; j++)); do
+
 		# Convert training data to arff format
-		csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset train.csv >train.arff
+		csv2arff -skip -ni -limit=${small_dataset} inputs_updated.dat dataset train.csv >train.arff
 		# -skip      - skip records with missing values
 		# -ni        - do not convert binary inputs to nominal Boolean
 		# -limits=n  - balancing dataset 
@@ -135,8 +145,6 @@ do
 		# train.csv  - the input csv file
 		# train.arff - the output arff file
 		# Convert test data to arff format
-
-		csv2arff -skip -ni -limit=${n} inputs_updated.dat dataset test.csv >test.arff
 
 		# Set parameters for the machine learning
 		CLASSIFIER="weka.classifiers.trees.RandomForest"
