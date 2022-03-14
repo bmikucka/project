@@ -45,6 +45,6 @@ print (sys.argv[1], mcc)
 # to run
 # for file in ./*.out 
 # do
-# ~/bin/get_mcc.py $file >> mcc_results 
+# ~/bin/get_mcc.py $file >> mcc_results.txt
 # done
 
