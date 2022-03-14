@@ -24,7 +24,8 @@ file_lines = read_file(sys.argv[1])
 
 mcc_results = []
 for line in file_lines:
-   mcc_int = int(line[1])
+   line_infos = line.split()
+   mcc_int = int(line_infos[1])
    mcc_results.append(mcc_int)
 
 mcc_avg = int(sum(mcc_results)) / int(len(mcc_results))
