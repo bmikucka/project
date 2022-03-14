@@ -22,13 +22,12 @@ def read_file (filename):
 #*************************************************************************
 
 # read file
-file_lines = read_file(sys.argv[0])
+file_lines = read_file(sys.argv[1])
 
 result_lines = []
 
 # get the second line that starts with Weighted Avg. 
 for line in file_lines:
-   print (line)
    if line.startswith("Weighted"):
       result_lines.append(line)
 
