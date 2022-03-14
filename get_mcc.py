@@ -29,6 +29,7 @@ result_lines = []
 # get the second line that starts with Weighted Avg. 
 for line in file_lines:
    if line.startswith("Weighted"):
+      print (line)
       result_lines.append(line)
 
 result_line = result_lines[1]
