@@ -35,7 +35,7 @@ result_line = result_lines[1]
 result_line = ' '.join(result_line.split())
 results = result_line.split()
 
-mcc = results [6]
+mcc = results [7]
 
 # print file name and MCC result
 
