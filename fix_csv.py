@@ -19,49 +19,49 @@ for x in range (row_count):
       # writing into the file
       df.to_csv(filename, index=False)
 
-   distance = float(df.get_value(x, 'SprotFTdist-DNA_BIND'))
+   distance = float(df._get_value(x, 'SprotFTdist-DNA_BIND'))
    if distance > 15 or distance == -1:
       #change the value to 15
       df.loc[x, 'SprotFTdist-DNA_BIND'] = '15'
       # writing into the file
       df.to_csv(filename, index=False)
   
-   distance = float(df.get_value(x, 'SprotFTdist-NP_BIND'))
+   distance = float(df._get_value(x, 'SprotFTdist-NP_BIND'))
    if distance > 15 or distance == -1:
       #change the value to 15
       df.loc[x, 'SprotFTdist-NP_BIND'] = '15'
       # writing into the file
       df.to_csv(filename, index=False)
 
-   distance = float(df.get_value(x, 'SprotFTdist-METAL'))
+   distance = float(df._get_value(x, 'SprotFTdist-METAL'))
    if distance > 15 or distance == -1:
       #change the value to 15
       df.loc[x, 'SprotFTdist-METAL'] = '15'
       # writing into the file
       df.to_csv(filename, index=False)
 
-   distance = float(df.get_value(x, 'SprotFTdist-MOD_RES'))
+   distance = float(df._get_value(x, 'SprotFTdist-MOD_RES'))
    if distance > 15 or distance == -1:
       #change the value to 15
       df.loc[x, 'SprotFTdist-MOD_RES'] = '15'
       # writing into the file
       df.to_csv(filename, index=False)
 
-   distance = float(df.get_value(x, 'SprotFTdist-CARBOHYD'))
+   distance = float(df._get_value(x, 'SprotFTdist-CARBOHYD'))
    if distance > 15 or distance == -1:
       #change the value to 15
       df.loc[x, 'SprotFTdist-CARBOHYD'] = '15'
       # writing into the file
       df.to_csv(filename, index=False)
 
-   distance = float(df.get_value(x, 'SprotFTdist-MOTIF'))
+   distance = float(df._get_value(x, 'SprotFTdist-MOTIF'))
    if distance > 15 or distance == -1:
       #change the value to 15
       df.loc[x, 'SprotFTdist-MOTIF'] = '15'
       # writing into the file
       df.to_csv(filename, index=False)
 
-   distance = float(df.get_value(x, 'SprotFTdist-LIPID'))
+   distance = float(df._get_value(x, 'SprotFTdist-LIPID'))
    if distance > 15 or distance == -1:
       #change the value to 15
       df.loc[x, 'SprotFTdist-LIPID'] = '15'
