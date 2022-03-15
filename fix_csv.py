@@ -12,6 +12,20 @@ row_count = len(df)
 
 # for column 1 get the value 
 for x in range (row_count):
+distance = float(df._get_value(x, 'SprotFTdist-ACT_SITE'))
+   if distance > 15 or distance == -1:
+      #change the value to 15
+      df.loc[x, 'SprotFTdist-ACT_SITE'] = '15'
+      # writing into the file
+      df.to_csv(filename, index=False)
+
+   distance = float(df._get_value(x, 'SprotFTdist-BINDING'))
+   if distance > 15 or distance == -1:
+      #change the value to 15
+      df.loc[x, 'SprotFTdist-BINDING'] = '15'
+      # writing into the file
+      df.to_csv(filename, index=False)
+
    distance = float(df._get_value(x, 'SprotFTdist-CA_BIND'))
    if distance > 15 or distance == -1:
       #change the value to 15
