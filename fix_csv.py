@@ -12,7 +12,7 @@ row_count = len(df)
 
 # for column 1 get the value 
 for x in range (row_count):
-   distance = float(df.get_value(x, 'SprotFTdist-CA_BIND'))
+   distance = float(df._get_value(x, 'SprotFTdist-CA_BIND'))
    if distance > 15 or distance == -1:
       #change the value to 15
       df.loc[x, 'SprotFTdist-CA_BIND'] = '15'
