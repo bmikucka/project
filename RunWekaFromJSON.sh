@@ -16,7 +16,7 @@ export CLASSPATH="$WEKA/weka.jar"
 CLASSIFIER="weka.classifiers.trees.RandomForest"
 JAVAFLAGS=-Xmx6g
 NTREE=1000
-NFEAT=40
+NFEAT=4
 
 # Storage of all Intermediate files
 mkdir -p INTERMEDIATEFILES
@@ -65,6 +65,11 @@ echo -n "Concatenating csv files..."
 $bindir/join_csv.sh pd 
 $bindir/join_csv.sh snp
 echo "done"
+
+#echo -n "Editing SProtFT-dist columns >15A and -1 to 15A... "
+#$bindir/fix_csv.py pd.csv
+#$bindir/fix_csv.py snp.csv
+#echo "done"
 
 #find dataset size for PD
 numPD=$(cat pd.csv | wc -l)
@@ -147,7 +152,7 @@ do
     echo ""
     echo ""
     echo -n "FOLD $fold - Creating test ARFF file: $testARFF..."
-    csv2arff -skip -ni inputs.dat dataset $testCSV > $testARFF 2>$errors
+    csv2arff -skip -ni inputs_updated.dat dataset $testCSV > $testARFF 2>$errors
     echo "done"
     
     # Do the balancing training runs
@@ -160,7 +165,7 @@ do
         trainARFF=`basename $trainCSV .csv`_$balance.arff
         errors=`basename $trainCSV .csv`_$balance.errors
         echo -n "Creating train ARFF file: $trainARFF..."
-	csv2arff -skip -ni -limit=$limit inputs.dat dataset $trainCSV >$trainARFF 2>$errors
+	csv2arff -skip -ni -limit=$limit inputs_updated.dat dataset $trainCSV >$trainARFF 2>$errors
 	# -skip      - skip records with missing values
 	# -ni        - do not convert binary inputs to nominal Boolean
 	# -limits=n  - balancing dataset 
