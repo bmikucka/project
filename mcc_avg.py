@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import statistics
 
 #*************************************************************************
 def read_file (filename):
@@ -29,5 +30,6 @@ for line in file_lines:
    mcc_results.append(mcc_int)
 
 mcc_avg = (sum(mcc_results)) / (len(mcc_results))
+st_dev = statistics.pstdev(mcc_results)
 
-print (mcc_avg)
+print (mcc_avg, st_dev)
