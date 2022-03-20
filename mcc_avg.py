@@ -30,6 +30,6 @@ for line in file_lines:
    mcc_results.append(mcc_int)
 
 mcc_avg = (sum(mcc_results)) / (len(mcc_results))
-st_dev = statistics.pstdev(mcc_results)
+st_dev = statistics.stdev(mcc_results)
 
 print (mcc_avg, st_dev)
