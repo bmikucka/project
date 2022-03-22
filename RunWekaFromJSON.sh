@@ -15,8 +15,9 @@ export WEKA=/home/amartin/weka-3-8-3
 export CLASSPATH="$WEKA/weka.jar"
 CLASSIFIER="weka.classifiers.trees.RandomForest"
 JAVAFLAGS=-Xmx6g
-NTREE=1000
+NTREE=500
 NFEAT=4
+DEPTH=15
 
 # Storage of all Intermediate files
 mkdir -p INTERMEDIATEFILES
@@ -152,7 +153,7 @@ do
     echo ""
     echo ""
     echo -n "FOLD $fold - Creating test ARFF file: $testARFF..."
-    csv2arff -skip -ni inputs.dat dataset $testCSV > $testARFF 2>$errors
+    csv2arff -skip -ni inputs_updated.dat dataset $testCSV > $testARFF 2>$errors
     echo "done"
     
     # Do the balancing training runs
@@ -165,7 +166,7 @@ do
         trainARFF=`basename $trainCSV .csv`_$balance.arff
         errors=`basename $trainCSV .csv`_$balance.errors
         echo -n "Creating train ARFF file: $trainARFF..."
-	csv2arff -skip -ni -limit=$limit inputs.dat dataset $trainCSV >$trainARFF 2>$errors
+	csv2arff -skip -ni -limit=$limit inputs_updated.dat dataset $trainCSV >$trainARFF 2>$errors
 	# -skip      - skip records with missing values
 	# -ni        - do not convert binary inputs to nominal Boolean
 	# -limits=n  - balancing dataset 
@@ -180,7 +181,7 @@ do
         trainModel=`basename $trainCSV .csv`_$balance.model
         echo -n "Training and testing..."
         outFile=test_${fold}_${balance}.out
-	java $JAVAFLAGS $CLASSIFIER -I $NTREE -K $NFEAT -t $trainARFF -d $trainModel -T $testARFF > $outFile
+	java $JAVAFLAGS $CLASSIFIER -I $NTREE -K $NFEAT -depth $DEPTH -t $trainARFF -d $trainModel -T $testARFF > $outFile
         echo "done (Results in $outFile)"
 
 	# This tests on a pre-trained model
