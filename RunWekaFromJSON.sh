@@ -17,7 +17,7 @@ CLASSIFIER="weka.classifiers.trees.RandomForest"
 JAVAFLAGS=-Xmx6g
 NTREE=500
 NFEAT=4
-DEPTH=15
+DEPTH=5
 
 # Storage of all Intermediate files
 mkdir -p INTERMEDIATEFILES
