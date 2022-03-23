@@ -153,7 +153,7 @@ do
     echo ""
     echo ""
     echo -n "FOLD $fold - Creating test ARFF file: $testARFF..."
-    csv2arff -skip -ni inputs_updated.dat dataset $testCSV > $testARFF 2>$errors
+    csv2arff -skip -ni inputs.dat dataset $testCSV > $testARFF 2>$errors
     echo "done"
     
     # Do the balancing training runs
@@ -166,7 +166,7 @@ do
         trainARFF=`basename $trainCSV .csv`_$balance.arff
         errors=`basename $trainCSV .csv`_$balance.errors
         echo -n "Creating train ARFF file: $trainARFF..."
-	csv2arff -skip -ni -limit=$limit inputs_updated.dat dataset $trainCSV >$trainARFF 2>$errors
+	csv2arff -skip -ni -limit=$limit inputs.dat dataset $trainCSV >$trainARFF 2>$errors
 	# -skip      - skip records with missing values
 	# -ni        - do not convert binary inputs to nominal Boolean
 	# -limits=n  - balancing dataset 
