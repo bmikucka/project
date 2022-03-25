@@ -15,7 +15,7 @@ export WEKA=/home/amartin/weka-3-8-3
 export CLASSPATH="$WEKA/weka.jar"
 CLASSIFIER="weka.classifiers.trees.RandomForest"
 JAVAFLAGS=-Xmx6g
-NTREE=500
+NTREE=1000
 NFEAT=4
 DEPTH=10
 
