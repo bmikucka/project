@@ -15,9 +15,9 @@ export WEKA=/home/amartin/weka-3-8-3
 export CLASSPATH="$WEKA/weka.jar"
 CLASSIFIER="weka.classifiers.trees.RandomForest"
 JAVAFLAGS=-Xmx6g
-NTREE=1000
-NFEAT=4
-DEPTH=15
+NTREE=$2
+NFEAT=$3
+DEPTH=$4
 
 # Storage of all Intermediate files
 mkdir -p INTERMEDIATEFILES
