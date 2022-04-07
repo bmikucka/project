@@ -39,7 +39,7 @@ mcc = results [7]
 
 # print file name and MCC result
 
-print  (mcc)
+print (sys.argv[1], mcc)
 
 
 # to run
