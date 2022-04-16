@@ -80,7 +80,7 @@ def mwu_test (filename_a, filename_b):
 
    # Getting data in to a dictionary
    data = {'A': mcc_results_a,
-         'B': mcc_results_b}
+            'B': mcc_results_b}
 
    # Dictionary to Dataframe
    df = pd.DataFrame(data)
