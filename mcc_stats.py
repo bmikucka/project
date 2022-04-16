@@ -74,11 +74,7 @@ def mwu_test (filename_a, filename_b):
    lines = read_file (filename_b)
    for line in lines:
       infos = line.split()
-      mcc_results_a.append(infos[1])
-
-   print(len(mcc_results_a))
-   print(len(mcc_results_b))
-
+      mcc_results_b.append(infos[1])
 
 
 
