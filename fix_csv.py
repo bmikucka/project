@@ -1,10 +1,39 @@
 #!/usr/bin/python3
 
+"""
+Program: fix_csv
+File:    fix_csv.py
+
+Version:    V1.0
+Date:       15.03.2022
+Function:   Changes all values in SprotFTdist columns in csv file to 15 if 
+            value is >15.
+
+
+Author: Barbara A. Mikucka
+
+--------------------------------------------------------------------------
+Usage:
+=================
+
+
+--------------------------------------------------------------------------
+Revision history:
+=================
+V1.0  15.03.22    Original    By: BAM
+"""
+
+#*************************************************************************
+# Import libraries
+
 import sys
 import pandas as pd
 
+#*************************************************************************
+
 filename = sys.argv[1]
 
+#read csv file
 df = pd.read_csv(filename)
 
 #get number of rows
