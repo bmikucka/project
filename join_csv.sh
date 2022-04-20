@@ -1,7 +1,36 @@
  #!/bin/sh
 
+#*************************************************************************
+#
+#   Program:    join_csv
+#   File:       join_csv.sh
+#   
+#   Version:    V1.0
+#   Date:       23.02.22
+#   Function:   Join CSV files
+#
+#   Author: Barbara A. Mikucka
+#               
+#*************************************************************************
+#
+#   Description:
+#   ============
+#
+#*************************************************************************
+#
+#   Usage:
+#   ======
+#
+#*************************************************************************
+#
+#   Revision History:
+#   =================
+#   V1.0   23.02.22  Original   By: BAM
+#
+#*************************************************************************
+
 #join all csvs together - only keep one header
-#take SNP/PD from command line
+#take dataset type SNP/PD from command line
 
 dataset=$1
 
