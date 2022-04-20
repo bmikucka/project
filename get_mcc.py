@@ -1,9 +1,30 @@
 #!/usr/bin/python3
 
-# get MCC result
+"""
+Program: get_mcc
+File:    get_mcc.py
+
+Version:    V1.0
+Date:       14.03.22
+Function:   List test MCC values from Weka output files
+
+
+Author: Barbara A. Mikucka
+
+--------------------------------------------------------------------------
+Usage:
+======
+
+--------------------------------------------------------------------------
+Revision history:
+=================
+V1.0  14.03.2022    Original    By: BAM
+"""
+
+#*************************************************************************
+# Import libraries
 
 import sys
-
 #*************************************************************************
 def read_file (filename):
    """ Read input file and split by lines into a list.
