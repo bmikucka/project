@@ -1,5 +1,53 @@
 #!/bin/sh
 
+#*************************************************************************
+#
+#   Program:    RunWekaFromJSON
+#   File:       RunWekaFromJSON.sh
+#   
+#   Version:    V1.0
+#   Date:       15.03.22
+#   Function:   Runs Weka Random Forest train and test from JSON files
+#
+#               
+#*************************************************************************
+#
+#   Description:
+#   ============
+#
+#*************************************************************************
+#
+#   Usage:
+#   ======
+#   Usage: RunWekaFromJSON.sh fold NTREE NFT DEPTH 
+#           
+#           fold    - number for x-fold cross validation
+#           NTREE   - Machine Learning parameter tree
+#           NFT     - Machine Learning parameter number of features
+#           DEPTH   - Machine Learning paramtere depth
+#
+#   Required:
+#       files:
+#           inputs.dat/inputs_updated.dat
+#       programs:
+#           json2csv_uniprot_allPDB.pl
+#           join_csv.sh
+#           xvalidate.pl
+#           CreateTrainTest.pl 
+#           csv2arff
+#           
+#           weka.classifiers.trees.RandomForest
+#           
+#
+#*************************************************************************
+#
+#   Revision History:
+#   =================
+#   V1.0   15.03.22  Original       By: BAM
+#   V1.1   15.03.22  Fixed mistakes By: ACRM
+#*************************************************************************
+
+
 # cross validation number from command line
 xval=$1
 
