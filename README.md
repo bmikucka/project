@@ -27,6 +27,7 @@
 ## SprotFTdist module
 Calculates the distance of mutant residue to the closest SwissProt feature. 
 Runs by taking a PDB file and a mutation as input and produces JSON as output
+* **To run:** sprotfeatures.py [chain]resnum[insert] newaa pdbfile
 * Ensure Atomium is installed. Instructions: https://atomium.bio/installing.html
 * PDB files analysed must be locally downloaded
 
