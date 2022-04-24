@@ -5,6 +5,7 @@
 
 ### Files
 * **inputs.dat, inputs_updated.dat** - Used for RunWekaFromJSON.sh
+* **README.md** - This file
 
 ### Directories
 * **data** - Includes HumVar dataset used for analaysis and the results of best machine learning testing runs
