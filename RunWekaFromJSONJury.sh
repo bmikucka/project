@@ -36,11 +36,11 @@ do
         
         echo "Testing element ${element}"
 
-        testCSV="test_0${fold}_${element}.csv"
+        singletestCSV="test_0${fold}_${element}.csv"
         testARFF="test_0${fold}_${element}.arff"
         errors="test_0${fold}_${element}.errors"
         
-        csv2arff -skip -ni -limit=$limit inputs.dat dataset $testCSV >$testARFF 2>$errors
+        csv2arff -skip -ni -limit=$limit inputs.dat dataset $singletestCSV >$testARFF 2>$errors
 
         for ((balance=0; balance<18; balance++))
         do
