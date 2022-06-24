@@ -15,7 +15,7 @@ JAVAFLAGS=-Xmx6g
 echo "Doing the testing runs!"
 
 
-for ((fold=0; fold<9; fold++))
+for ((fold=0; fold<10; fold++))
 do
     echo "Handling fold no. ${fold}"
 
@@ -25,7 +25,7 @@ do
     echo "Making individual csv files for test_0${fold}.csv datapoints"
     #divide CSV into individual CSVs
     mkdir test_files_${fold}
-    break_csv.sh $testCSV $fold
+    bindir/break_csv.sh $testCSV $fold
 
     echo "Creating ARFF files for all test files."
 
@@ -58,13 +58,13 @@ do
         echo "Calculating TP/TN/FP/FN output for fold ${fold} for element ${element}"
         for file in ./test2_${fold}_${element}_*.out
         do
-             confusion_matrix_calc.py $file >> matrix_results_${fold}_${element}.txt
+             bindir/confusion_matrix_calc.py $file >> matrix_results_${fold}_${element}.txt
              #all the TP/FP/TN/FN results in a text file for that datapoint across all balancing runs
 
         done
 
         #get the mode from the matrix_results file to get the result for that element (TP/FP/TN/FN)
-        matrix_mode.py matrix_results_${fold}_${element}.txt >> mcc_data_${fold}.txt
+        bindir/matrix_mode.py matrix_results_${fold}_${element}.txt >> mcc_data_${fold}.txt
 
         element=$(expr $element + 1)
 
@@ -72,7 +72,7 @@ do
 
     #calculate MCC score for this fold
     echo "Calculating MCC score for fold ${fold}"
-    mcc_calc.py mcc_data_${fold}.txt >> mcc_scores.txt
+    bindir/mcc_calc.py mcc_data_${fold}.txt >> mcc_scores.txt
 
     mv *.arff *.errors *${fold}.csv test_files_${fold}
 
@@ -80,7 +80,7 @@ done
 
 #get mean of the 10 mcc scores
 echo "The MCC mean across the 10 folds is equal to:"
-mcc_scores.py mcc_scores.txt 
+bindir/mcc_scores.py mcc_scores.txt 
 
 
 
