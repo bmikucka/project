@@ -4,7 +4,7 @@ file=$1
 fold=$2
 
 #get number of elements
-num=$(cat file | wc -l)
+num=$(cat $file | wc -l)
 num=$(expr $num - 1) #without the headline
 
 for ((element=0; element<$num; element++))
