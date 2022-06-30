@@ -28,37 +28,20 @@ file_lines = read_file(sys.argv[1])
 
 
 for line in file_lines:
-   if line.startswith("     a"):
-      title = file_lines.index(line)
-      title = int(title)
-      #get index of lines of confusion matrix
-      positive_line_index = title + 1
-      negative_line_index = title + 2
+   if line.startswith("        1"):
 
-      #get lines of confusion matrix
-      positive_line = file_lines[positive_line_index]
-      negative_line = file_lines[negative_line_index]
+      answers = line.split()
 
-      #make list of numbers classified as positives and negatives
-      positives = positive_line.split()
-      negatives = negative_line.split()
+      actual = answers[1]
+      predicted = answers[2]
 
-      #get True and False Values
-
-      TP = positives[0]
-      FN = positives[1]
-      FP = negatives[0]
-      TN = negatives[1]
-
-      #check which on it is
-
-      if TP == "1":
+      if actual == "1:PD" and predicted == "1:PD":
          result = "TP"
-      elif FN == "1":
+      elif actual == "1:PD" and predicted == "2:SNP":
          result = "FN"
-      elif FP == "1":
+      elif actual == "2:SNP" and predicted == "1:PD":
          result = "FP"
-      elif TN == "1":
+      elif actual == "2:SNP" and predicted == "2:SNP":
          result = "TN"
 
 
