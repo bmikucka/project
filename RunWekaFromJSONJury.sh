@@ -46,8 +46,8 @@ do
         csv2arff -skip -ni inputs.dat dataset $singletestCSV >$testARFF 2>$errors
 
         #fix the dataset line from PD or SNP into both
-        sed -i 's/@attribute dataset {PD}/@attribute dataset {PD,SNP}/g' testARFF
-        sed -i 's/@attribute dataset {SNP}/@attribute dataset {PD,SNP}/g' testARFF
+        sed -i 's/@attribute dataset {PD}/@attribute dataset {PD,SNP}/g' $testARFF
+        sed -i 's/@attribute dataset {SNP}/@attribute dataset {PD,SNP}/g' $testARFF
 
 
         for ((balance=0; balance<18; balance++))
