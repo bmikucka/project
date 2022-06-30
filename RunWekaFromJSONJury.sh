@@ -17,6 +17,8 @@ echo "Doing the testing runs!"
 
 for ((fold=0; fold<10; fold++))
 do
+    echo ""
+    echo ""
     echo "Handling fold no. ${fold}"
 
     #name of test file
@@ -27,7 +29,6 @@ do
     mkdir test_files_${fold}
     $bindir/break_csv.sh $testCSV $fold
 
-    echo "Creating ARFF files for all test files."
 
     #for each datapoint in the testing set - for each file test_0${fold}_${element}.csv
     element=0
@@ -40,7 +41,14 @@ do
         testARFF="test_0${fold}_${element}.arff"
         errors="test_0${fold}_${element}.errors"
         
+        echo "Making arff file"
+
         csv2arff -skip -ni inputs.dat dataset $singletestCSV >$testARFF 2>$errors
+
+        #fix the dataset line from PD or SNP into both
+        sed -i 's/@attribute dataset {PD}/@attribute dataset {PD,SNP}/g' testARFF
+        sed -i 's/@attribute dataset {SNP}/@attribute dataset {PD,SNP}/g' testARFF
+
 
         for ((balance=0; balance<18; balance++))
         do
@@ -55,6 +63,7 @@ do
 
         done
 
+        echo ""
         echo "Calculating TP/TN/FP/FN output for fold ${fold} for element ${element}"
         for file in ./test2_${fold}_${element}_*.out
         do
@@ -71,6 +80,8 @@ do
     done
 
     #calculate MCC score for this fold
+    
+    echo ""
     echo "Calculating MCC score for fold ${fold}"
     $bindir/mcc_calc.py mcc_data_${fold}.txt >> mcc_scores.txt
 
@@ -79,6 +90,9 @@ do
 done
 
 #get mean of the 10 mcc scores
+echo ""
+echo ""
+echo ""
 echo "The MCC mean across the 10 folds is equal to:"
 $bindir/mcc_scores.py mcc_scores.txt 
 
