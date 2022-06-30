@@ -25,7 +25,13 @@ def read_file (filename):
 #*************************************************************************
 
 # read file
-mccs = read_file(sys.argv[1])
+lines = read_file(sys.argv[1])
+
+mccs = []
+
+for line in lines:
+   if line != "":
+      mccs.append(line)
 
 mcc_avg = statistics.mean(mccs)
 
