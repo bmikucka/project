@@ -25,6 +25,7 @@ do
     testCSV="test_0${fold}.csv"
 
     echo "Making individual csv files for test_0${fold}.csv datapoints"
+    echo ""
     #divide CSV into individual CSVs
     mkdir test_files_${fold}
     $bindir/break_csv.sh $testCSV $fold
@@ -85,7 +86,7 @@ do
     echo "Calculating MCC score for fold ${fold}"
     $bindir/mcc_calc.py mcc_data_${fold}.txt >> mcc_scores.txt
 
-    mv *.arff *.errors *${fold}.csv test_files_${fold}
+    mv *.arff *.errors test_0${fold}_*.csv matrix_results_${fold}_*.txt test_files_${fold}
 
 done
 
