@@ -33,7 +33,7 @@ for line in file_lines:
       answers = line.split()
 
       score = answers[-1]
-      score = float(prediction)
+      score = float(score)
       score = score/2
 
       predicted = answers[2]

@@ -34,6 +34,7 @@ for line in file_lines:
 
    answers = line.split()
    score = answers[1]
+   score = float(score)
    #make list of confidence scores across all balancing runs to get average 
    scores.append(score)
 
