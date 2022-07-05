@@ -34,15 +34,14 @@ for line in file_lines:
 
       score = answers[-1]
       score = float(score)
-      score = score/2
 
       predicted = answers[2]
 
       actual = answers[1]
 
       if predicted == "1:PD":
-         result = 0.5 + score
+         result = score
       elif predicted == "2:SNP":
-         result = 0.5 - score
+         result = 1 - score
 
 print (actual, result)

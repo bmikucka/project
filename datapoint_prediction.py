@@ -47,9 +47,13 @@ for line in lines:
 #have list of scores to average and the real classification
 
 avg_score = sum(scores) / len(scores)
+result = ""
+
+#REMOVE BELOW #COMMENT TO ONLY CONSIDER THE MORE CONFIDENT SCORES
+#if avg_score < 0.4 or avg_score > 0.6 
 if avg_score > 0.5:
    predicted = "1:PD"
-elif avg_score < 0.5:
+elif avg_score <= 0.5:
    predicted = "2:SNP"
 
 
