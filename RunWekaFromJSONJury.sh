@@ -64,8 +64,8 @@ do
 
         done
 
-        echo ""
         echo "Calculating TP/TN/FP/FN output for fold ${fold} for element ${element}"
+        echo ""
         for file in ./test2_${fold}_${element}_*.out
         do
              $bindir/confusion_matrix_calc.py $file >> matrix_results_${fold}_${element}.txt
