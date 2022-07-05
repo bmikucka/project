@@ -26,11 +26,17 @@ def read_file (filename):
 # read file
 file_lines = read_file(sys.argv[1])
 
-first_line_elements = file_lines[0].split()
+lines = []
+for line in file_lines:
+   if line != "":
+      lines.append(line)
+
+
+first_line_elements = lines[0].split()
 actual = first_line_elements[0]
 scores = []
 
-for line in file_lines:
+for line in lines:
 
    answers = line.split()
    score = answers[1]
