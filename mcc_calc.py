@@ -33,14 +33,15 @@ FN = 0
 FP = 0
 TN = 0
 
+
 for result in results:
-   if result == "TP":
+   if "TP" in result:
       TP = TP + 1
-   elif result == "FN":
+   elif "FN" in result:
       FN = FN + 1
-   elif result == "FP":
+   elif "FP" in result:
       FP = FP + 1
-   elif result == "TN":
+   elif "TN" in result:
       TN = TN + 1
 
 
